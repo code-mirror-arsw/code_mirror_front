@@ -13,7 +13,7 @@ function App() {
     <Routes>
       <Route path="/" element={<IndexPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/interview/:data" element={<InterviewPage />} />
+      <Route path="/room" element={<InterviewPage />} />
     </Routes>
   );
 }

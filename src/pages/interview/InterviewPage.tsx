@@ -1,13 +1,21 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { decryptAESBase64Url, parseInterviewData } from "../../util/crypto";
-import { MonacoEditor } from "../../components/editor/MonacoEditor";
+import InterviewLayout from "../../components/interview/InterviewLayout";
+
+// 🔧 Aquí defines el hook que te faltaba
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 export default function InterviewPage() {
-  const { data } = useParams<{ data: string }>();
+  const query = useQuery();
+  const data = query.get("data");
+
   const [valid, setValid] = useState(false);
-  const [interviewId, setInterviewId] = useState("");
   const [email, setEmail] = useState("");
+  const [interviewId, setInterviewId] = useState("");
+  const [participants, setParticipants] = useState<string[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -19,20 +27,18 @@ export default function InterviewPage() {
     (async () => {
       try {
         const decrypted = await decryptAESBase64Url(data);
-        const { interviewId, email, fecha } = parseInterviewData(decrypted);
+        const parsed = parseInterviewData(decrypted);
+        console.log("[🔍 Desencriptado]:", parsed);
 
-        const fechaISO = new Date(fecha);
-        if (isNaN(fechaISO.getTime())) {
-          throw new Error("Invalid date format");
-        }
+        const fechaISO = new Date(parsed.fecha);
+        if (isNaN(fechaISO.getTime())) throw new Error("Invalid date format");
 
         const now = new Date();
-        if (fechaISO < now) {
-          throw new Error("Link has expired");
-        }
+        if (fechaISO > now) throw new Error("Link has expired");
 
-        setInterviewId(interviewId);
-        setEmail(email);
+        setEmail(parsed.email);
+        setInterviewId(parsed.interviewId);
+        setParticipants(parsed.participants || []);
         setValid(true);
       } catch (err: any) {
         setError(err.message || "Error parsing link");
@@ -43,24 +49,18 @@ export default function InterviewPage() {
   if (!valid) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="text-center text-red-600">{error || "Invalid or expired link"}</div>
+        <div className="text-center text-red-600">
+          {error || "Invalid or expired link"}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white p-4">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold">Interview Room</h1>
-        <p className="text-sm">Interview ID: {interviewId} • User: {email}</p>
-      </header>
-
-      <div className="flex flex-col gap-4">
-        <MonacoEditor />
-        <button className="self-end px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Run Code
-        </button>
-      </div>
-    </div>
+    <InterviewLayout
+      email={email}
+      participants={participants}
+      interviewId={interviewId}
+    />
   );
 }

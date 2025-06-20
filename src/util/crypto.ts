@@ -1,4 +1,4 @@
-const CLAVE = 'tu-clave-estatica-aqui'; 
+const CLAVE = '2fC8#n9QeL@xR7VmZ4wTuP1$gHsJ6bEk'; 
 
 export async function decryptAESBase64Url(encoded: string): Promise<string> {
   try {
@@ -35,8 +35,11 @@ export async function decryptAESBase64Url(encoded: string): Promise<string> {
 export function parseInterviewData(query: string) {
   const params = new URLSearchParams(query);
   return {
-    interviewId: params.get('interviewId') ?? '',
-    email: params.get('email') ?? '',
-    fecha: params.get('fecha') ?? '',
+    interviewId: params.get('interviewId')!,
+    email: params.get('email')!,
+    fecha: params.get('fecha')!,
+    participants: params.get('participants')?.split(',') || [],
   };
 }
+
+
