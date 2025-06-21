@@ -1,17 +1,17 @@
-import { ThemeToggle } from '../../components/changeTheme/ThemeToggle';
+import { ThemeToggle } from "../../components/changeTheme/ThemeToggle";
+import RegisterForm from "../../components/Register/RegisterForm";
 import { AuthCard } from '../../components/login/AuthCard';
-import { LoginForm } from "../../components/login/LoginForm";
 
-export default function LoginPage() {
+
+export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-lightmode-background dark:bg-background text-lightmode-text dark:text-light transition-colors duration-300 px-4">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
       <AuthCard>
-        <LoginForm />
+        <RegisterForm />
       </AuthCard>
     </div>
   );
 }
-

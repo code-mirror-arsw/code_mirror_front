@@ -1,4 +1,4 @@
-import CollaborativeEditor  from "../../components/editor/CollaborativeEditor";
+import CollaborativeEditor from "../../components/editor/CollaborativeEditor";
 
 interface EditorSectionProps {
   interviewId: string;
@@ -8,8 +8,8 @@ interface EditorSectionProps {
 export default function EditorSection({ interviewId, email }: EditorSectionProps) {
   return (
     <div className="space-y-4">
-      <CollaborativeEditor roomId={interviewId} />
-      
+      <CollaborativeEditor roomId={interviewId} userEmail={email} />
+
       <div className="flex justify-end">
         <button className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
           Enviar ▶️

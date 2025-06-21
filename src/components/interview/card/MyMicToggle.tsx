@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 interface MyMicToggleProps {
   userEmail: string;
+  stream: MediaStream | null;
 }
 
-export function MyMicToggle({ userEmail }: MyMicToggleProps) {
+export function MyMicToggle({ userEmail, stream }: MyMicToggleProps) {
   const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    if (stream) {
+      stream.getAudioTracks().forEach(track => {
+        track.enabled = enabled; // Activa o desactiva el audio
+      });
+    }
+  }, [enabled, stream]);
 
   const toggleMic = () => {
     setEnabled(prev => !prev);

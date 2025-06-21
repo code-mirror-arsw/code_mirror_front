@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { decryptAESBase64Url, parseInterviewData } from "../../util/crypto";
 import InterviewLayout from "../../components/interview/InterviewLayout";
 
-// 🔧 Aquí defines el hook que te faltaba
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -16,6 +15,7 @@ export default function InterviewPage() {
   const [email, setEmail] = useState("");
   const [interviewId, setInterviewId] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -35,6 +35,10 @@ export default function InterviewPage() {
 
         const now = new Date();
         if (fechaISO > now) throw new Error("Link has expired");
+
+        const response = await fetch(`http://localhost:8081/services/be/user-service/role/email/${parsed.email}`);
+        const role = await response.text();
+        setIsAdmin(role.trim() === "ADMIN");
 
         setEmail(parsed.email);
         setInterviewId(parsed.interviewId);
@@ -61,6 +65,7 @@ export default function InterviewPage() {
       email={email}
       participants={participants}
       interviewId={interviewId}
+      isAdmin={isAdmin}
     />
   );
 }
