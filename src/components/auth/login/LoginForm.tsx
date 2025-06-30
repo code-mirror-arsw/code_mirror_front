@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
-import { SuccessModal } from "../../components/message/SuccessModal";
-import { ErrorModal } from "../../components/message/ErrorModal";
+import { SuccessModal } from "../../../components/message/SuccessModal";
+import { ErrorModal } from "../../../components/message/ErrorModal";
 
 export const LoginForm = () => {
   const [form, setForm] = useState({ email: "", password: "" });

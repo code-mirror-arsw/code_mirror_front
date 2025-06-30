@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import logo from "../login/logo.png"; 
+import logo from "../../components/auth/login/logo.png"; 
 
 interface OfferCardProps {
   children: ReactNode;

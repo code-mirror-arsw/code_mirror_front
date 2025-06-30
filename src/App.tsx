@@ -9,6 +9,7 @@ import CreateOfferPage from "./pages/admin/offer/CreateOfferPage";
 import OffersPage from "./pages/admin/offer/OffersPage";
 import OffersPageClient from "./pages/client/OffersPage";
 import NewOffers from "./pages/client/NewOffers";
+import ProfilePage from "./pages/perfil/ProfilePage";
 
 function App() {
   const location = useLocation();
@@ -30,7 +31,9 @@ function App() {
         <Route path="/crear-oferta" element={<CreateOfferPage />} />
         <Route path="/ofertas-creadas" element={<OffersPage />} />
         <Route path="/mis-ofertas" element={<OffersPageClient />} />
-         <Route path="/ofertas-nuevas" element={<NewOffers />} />
+        <Route path="/ofertas-nuevas" element={<NewOffers />} />
+        <Route path="/perfil" element={<ProfilePage />} />
+
       </Routes>
     </>
   );

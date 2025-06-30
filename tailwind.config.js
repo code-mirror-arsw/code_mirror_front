@@ -10,7 +10,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Paleta principal azul/oscura
         primary: "#1E3A8A",         // Azul fuerte
         secondary: "#3B82F6",       // Azul suave
         accent: "#60A5FA",          // Azul claro (acento)

@@ -1,12 +1,11 @@
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ThemeToggle } from "../changeTheme/ThemeToggle";
 import logo from "/logo 1.png";
 
 export default function AppNavbar() {
   const [role, setRole] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setRole(Cookies.get("userRole") || null);
@@ -40,12 +39,16 @@ export default function AppNavbar() {
             <>
               <Link to="/crear-oferta" className="hover:text-blue-600 transition">Crear Oferta</Link>
               <Link to="/ofertas-creadas" className="hover:text-blue-600 transition">Ofertas Creadas</Link>
+              <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
+
             </>
           )}
           {role === "CLIENT" && (
             <>
               <Link to="/mis-ofertas" className="hover:text-blue-600 transition">Mis Ofertas</Link>
               <Link to="/ofertas-nuevas" className="hover:text-blue-600 transition">Ofertas Nuevas</Link>
+              <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
+
             </>
           )}
         </div>

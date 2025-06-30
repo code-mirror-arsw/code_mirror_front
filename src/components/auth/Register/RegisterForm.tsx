@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RegisterInput from "../Register/RegisterInput";
 import { Button } from "@heroui/button";
-import { SuccessModal } from "../../components/message/SuccessModal";
-import { ErrorModal } from "../../components/message/ErrorModal";
+import { SuccessModal } from "../../../components/message/SuccessModal";
+import { ErrorModal } from "../../../components/message/ErrorModal";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
