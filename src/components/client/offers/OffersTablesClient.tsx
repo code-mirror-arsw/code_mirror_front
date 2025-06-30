@@ -31,17 +31,17 @@ export default function OffersTablesClient() {
   const [page, setPage] = useState(1);        // UI 1‑based
   const [totalPages, setTotalPages] = useState(1);
 
-  const userId = Cookies.get('id');           
+  const userEmail = Cookies.get('userEmail');           
 
   useEffect(() => {
-    if (!userId) return;                      
+    if (!userEmail) return;                      
 
     const controller = new AbortController(); 
 
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8080/services/be/offer-service/offers/clientId/${userId}?page=${
+          `http://localhost:8080/services/be/offer-service/offers/clientEmail/${userEmail}?page=${
             page - 1
           }&size=10`,
           { signal: controller.signal }
@@ -60,7 +60,7 @@ export default function OffersTablesClient() {
     })();
 
     return () => controller.abort();          
-  }, [userId, page]);                         
+  }, [userEmail, page]);                         
 
   return (
     <OfferListCardClient>

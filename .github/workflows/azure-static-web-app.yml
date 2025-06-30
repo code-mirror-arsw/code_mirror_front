@@ -1,0 +1,31 @@
+name: Build & Deploy to Azure Static Web App
+
+
+on:
+  push:
+    branches: [main]      # despliega al hacer push en main
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20          # cambia si usas otra versión
+          cache: 'npm'
+
+      - run: npm ci                 # npm install reproducible
+
+      - run: npm run build          # genera carpeta dist/
+
+      - uses: azure/static-web-apps-deploy@v2
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_DEPLOY_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}  # para PRs
+          action: "upload"
+          app_location: "/"          # raíz del repo
+          output_location: "dist"    # directorio generado por `npm run build`

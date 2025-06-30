@@ -10,7 +10,8 @@ export interface OfferJobDto {
   status: string;
   maxCandidates: number;
   adminEmail: string;
-  createdAt: string;          
+  createdAt: string;
+  id: string;
 }
 
 interface PageResponse {
@@ -25,6 +26,7 @@ export default function OffersNewCards() {
   const [totalPages, setTP] = useState(1);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -68,7 +70,10 @@ export default function OffersNewCards() {
             {offers.map((o, i) => (
               <article
                 key={i}
-                onClick={() => setModalOpen(true)}
+                onClick={() => {
+                  setSelectedOfferId(o.id);
+                  setModalOpen(true);
+                }}
                 className="cursor-pointer w-full bg-white dark:bg-card-dark shadow-md rounded-xl p-6 flex flex-col justify-between h-full transition hover:shadow-lg dark:hover:shadow-blue-900/40"
               >
                 <div>
@@ -97,7 +102,13 @@ export default function OffersNewCards() {
         </div>
       </section>
 
-      <OfferModal visible={modalOpen} onClose={() => setModalOpen(false)} />
+      {selectedOfferId && (
+        <OfferModal
+          visible={modalOpen}
+          onClose={() => setModalOpen(false)}
+          offerId={selectedOfferId}
+        />
+      )}
     </div>
   );
 }
