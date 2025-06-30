@@ -32,14 +32,19 @@ export default function CollaborativeEditor({
     });
     awarenessRef.current = awareness;
 
+    const model = editor.getModel();
+    if (!model) {
+      console.error("❌ No se pudo obtener el modelo del editor.");
+      return;
+    }
+
     const binding = new MonacoBinding(
       yText,
-      editor.getModel(),
+      model,
       new Set([editor]),
       awareness
     );
 
-    // Cleanup cuando se desmonta
     return () => {
       binding.destroy();
       provider.destroy();

@@ -19,7 +19,7 @@ export default function AppNavbar() {
     Cookies.remove("userName");
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
-    navigate("/login");
+    window.location.href = "/";
   };
 
   return (

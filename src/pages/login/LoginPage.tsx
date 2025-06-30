@@ -1,13 +1,10 @@
-import { ThemeToggle } from '../../components/changeTheme/ThemeToggle';
 import { AuthCard } from '../../components/login/AuthCard';
 import { LoginForm } from "../../components/login/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-lightmode-background dark:bg-background text-lightmode-text dark:text-light transition-colors duration-300 px-4">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-lightmode-background dark:bg-background 
+    text-lightmode-text dark:text-light transition-colors duration-300 px-4">
       <AuthCard>
         <LoginForm />
       </AuthCard>

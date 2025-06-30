@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { decryptAESBase64Url, parseInterviewData } from "../../util/crypto";
-import InterviewLayout from "../../components/interview/InterviewLayout";
+import { decryptAESBase64Url, parseInterviewData } from "../../../util/crypto";
+import InterviewLayout from "../../../components/interview/InterviewLayout";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import AppNavbar from "../../components/navigation/AppNavbar";
-import { ThemeToggle } from "../../components/changeTheme/ThemeToggle";
 import { FaCode, FaHeadphones, FaCheckCircle, FaBell, FaUserTie } from "react-icons/fa";
+import Social from "../../components/landing/soccialMedia/social"
 
 export default function LandingPage() {
   const [role, setRole] = useState<string | null>(null);
@@ -25,7 +24,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-lightmode-background dark:bg-background text-lightmode-text dark:text-light transition-colors duration-300">
-      <AppNavbar />
 
       <header className="text-center py-20 px-6">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Entrevistas técnicas más rápidas, efectivas y colaborativas</h1>
@@ -87,38 +85,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-       <section className="bg-gray-50 dark:bg-gray-900 py-16 px-6">
-        <h2 className="text-3xl font-bold text-center mb-12">¿Para quién es?</h2>
-        <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="font-bold text-xl mb-2">Startups</h3>
-            <p>Encuentra rápido a tu primer equipo de ingeniería con entrevistas técnicas efectivas.</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="font-bold text-xl mb-2">Reclutadores técnicos</h3>
-            <p>Centraliza tus evaluaciones y toma decisiones basadas en datos.</p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="font-bold text-xl mb-2">Empresas Tech</h3>
-            <p>Escala tu equipo sin perder tiempo en entrevistas mal enfocadas.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white dark:bg-gray-800 py-16 px-6">
-        <h2 className="text-3xl font-bold text-center mb-12">Preguntas Frecuentes</h2>
-        <div className="space-y-6 max-w-3xl mx-auto">
-          <details className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <summary className="font-semibold cursor-pointer">¿Puedo usarlo gratis?</summary>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Sí, puedes usar la plataforma totalmente gratis.</p>
-          </details>
-          <details className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-            <summary className="font-semibold cursor-pointer">¿Necesito instalar algo?</summary>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">No. Todo corre en la web con tu navegador favorito.</p>
-          </details>
-        </div>
-      </section>
-
       <section className="bg-white dark:bg-gray-800 py-16 px-6">
         <h2 className="text-3xl font-bold text-center mb-12">Testimonios</h2>
         <div className="overflow-hidden relative w-full max-w-3xl mx-auto">
@@ -148,15 +114,17 @@ export default function LandingPage() {
         </style>
       </section>
 
-    
       <footer className="bg-gray-800 text-white py-8 px-6 text-center">
-        <div className="space-y-2">
-          <p className="text-lg font-bold">Code Mirror</p>
-          <p>Síguenos en redes sociales: Facebook | Twitter | LinkedIn</p>
-          <p>Contacto: codemirror17@gmail.com</p>
-          <p className="text-sm text-gray-400">© {new Date().getFullYear()} Santiago Coronado. Todos los derechos reservados.</p>
+      <div className="space-y-2">
+        <p className="text-lg font-bold">Code Mirror</p>
+        <div className="flex justify-center">
+          <Social />
         </div>
-      </footer>
+        <p>Contacto: contacto@codemirror.com</p>
+        <p className="text-sm text-gray-400">© {new Date().getFullYear()} Santiago Coronado. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
     </div>
   );
 }
