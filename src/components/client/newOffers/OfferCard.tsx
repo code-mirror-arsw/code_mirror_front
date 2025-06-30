@@ -1,5 +1,5 @@
-import { OffersNewCards } from '../newOffers/OffersNewCards';
-import { motion } from 'framer-motion'; // si no usas framer, quita el wrapper
+import type { OfferJobDto } from '../newOffers/OffersNewCards';
+import { motion } from 'framer-motion';
 
 export default function OfferCard({ offer }: { offer: OfferJobDto }) {
   return (

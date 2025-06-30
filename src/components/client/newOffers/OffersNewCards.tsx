@@ -3,13 +3,14 @@ import PaginationBar from '../../offers/offersCreated/PaginationBar';
 import OfferModal from './OfferModal';
 import logo from '../../auth/login/logo.png';
 
-interface OfferJobDto {
+export interface OfferJobDto {
   company: string;
   title: string;
   description: string;
   status: string;
   maxCandidates: number;
   adminEmail: string;
+  createdAt: string;          
 }
 
 interface PageResponse {

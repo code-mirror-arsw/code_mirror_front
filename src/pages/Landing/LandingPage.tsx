@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { FaCode, FaHeadphones, FaCheckCircle, FaBell, FaUserTie } from "react-icons/fa";
-import Social from "../../components/landing/soccialMedia/social"
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import {
+  FaCode,
+  FaHeadphones,
+  FaCheckCircle,
+  FaBell,
+  FaUserTie,
+} from 'react-icons/fa';
+import Social from '../../components/landing/soccialMedia/social';
 
 export default function LandingPage() {
   const [role, setRole] = useState<string | null>(null);
@@ -9,8 +15,8 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setRole(Cookies.get("userRole") || null);
-    setName(Cookies.get("userName") || null);
+    setRole(Cookies.get('userRole') || null);
+    setName(Cookies.get('userName') || null);
     setLoading(false);
   }, []);
 
@@ -24,15 +30,28 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-lightmode-background dark:bg-background text-lightmode-text dark:text-light transition-colors duration-300">
-
       <header className="text-center py-20 px-6">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Entrevistas técnicas más rápidas, efectivas y colaborativas</h1>
+        {name && (
+          <p className="mb-4 text-lg font-semibold text-blue-600 dark:text-blue-400">
+            ¡Hola, {name}!{' '}
+            {role === 'CLIENT'
+              ? 'Explora nuevas oportunidades.'
+              : 'Publica tu próxima vacante.'}
+          </p>
+        )}
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          Entrevistas técnicas más rápidas, efectivas y colaborativas
+        </h1>
         <p className="text-xl text-gray-500 dark:text-gray-300 mb-8">
           Crea ofertas, postula candidatos, programa entrevistas en grupo con código y voz en tiempo real.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-blue-700 transition text-center">Probar gratis</button>
-          <button className="bg-gray-300 text-gray-900 font-semibold py-3 px-6 rounded-md hover:bg-gray-400 transition text-center">Agendar demo</button>
+          <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-md hover:bg-blue-700 transition">
+            {role === 'CLIENT' ? 'Buscar ofertas' : 'Probar gratis'}
+          </button>
+          <button className="bg-gray-300 text-gray-900 font-semibold py-3 px-6 rounded-md hover:bg-gray-400 transition">
+            Agendar demo
+          </button>
         </div>
       </header>
 
@@ -88,16 +107,22 @@ export default function LandingPage() {
       <section className="bg-white dark:bg-gray-800 py-16 px-6">
         <h2 className="text-3xl font-bold text-center mb-12">Testimonios</h2>
         <div className="overflow-hidden relative w-full max-w-3xl mx-auto">
-          <div className="animate-slide-left whitespace-nowrap space-x-8">
-            <div className="inline-block w-full px-4">
-              <blockquote className="text-center italic text-gray-600 dark:text-gray-400">“Usar Code Mirror nos ayudó a reducir el tiempo de contratación un 40%.”<br /><span className="font-bold mt-2 block">– Carla G., Microsoft</span></blockquote>
-            </div>
-            <div className="inline-block w-full px-4">
-              <blockquote className="text-center italic text-gray-600 dark:text-gray-400">“La evaluación automática es una locura, súper útil.”<br /><span className="font-bold mt-2 block">– David M., Amazon</span></blockquote>
-            </div>
-            <div className="inline-block w-full px-4">
-              <blockquote className="text-center italic text-gray-600 dark:text-gray-400">“Finalmente una plataforma enfocada en lo técnico de verdad.”<br /><span className="font-bold mt-2 block">– Laura T., Google</span></blockquote>
-            </div>
+          <div className="animate-slide-left whitespace-nowrap flex space-x-8">
+            <blockquote className="inline-block w-full px-4 text-center italic text-gray-600 dark:text-gray-400">
+              “Usar Code Mirror nos ayudó a reducir el tiempo de contratación un 40%.”
+              <br />
+              <span className="font-bold mt-2 block">– Carla G., Microsoft</span>
+            </blockquote>
+            <blockquote className="inline-block w-full px-4 text-center italic text-gray-600 dark:text-gray-400">
+              “La evaluación automática es una locura, súper útil.”
+              <br />
+              <span className="font-bold mt-2 block">– David M., Amazon</span>
+            </blockquote>
+            <blockquote className="inline-block w-full px-4 text-center italic text-gray-600 dark:text-gray-400">
+              “Finalmente una plataforma enfocada en lo técnico de verdad.”
+              <br />
+              <span className="font-bold mt-2 block">– Laura T., Google</span>
+            </blockquote>
           </div>
         </div>
         <style>
@@ -107,24 +132,20 @@ export default function LandingPage() {
             66% { transform: translateX(-200%); }
             100% { transform: translateX(0); }
           }
-          .animate-slide-left {
-            display: flex;
-            animation: slide-left 12s infinite;
-          }`}
+          .animate-slide-left { animation: slide-left 12s infinite; }`}
         </style>
       </section>
 
       <footer className="bg-gray-800 text-white py-8 px-6 text-center">
-      <div className="space-y-2">
-        <p className="text-lg font-bold">Code Mirror</p>
-        <div className="flex justify-center">
-          <Social />
+        <div className="space-y-2">
+          <p className="text-lg font-bold">Code Mirror</p>
+          <div className="flex justify-center">
+            <Social />
+          </div>
+          <p>Contacto: contacto@codemirror.com</p>
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} Santiago Coronado. Todos los derechos reservados.</p>
         </div>
-        <p>Contacto: contacto@codemirror.com</p>
-        <p className="text-sm text-gray-400">© {new Date().getFullYear()} Santiago Coronado. Todos los derechos reservados.</p>
-      </div>
-    </footer>
-
+      </footer>
     </div>
   );
 }
