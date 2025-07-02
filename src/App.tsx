@@ -10,6 +10,7 @@ import OffersPage from "./pages/admin/offer/OffersPage";
 import OffersPageClient from "./pages/client/OffersPage";
 import NewOffers from "./pages/client/NewOffers";
 import ProfilePage from "./pages/perfil/ProfilePage";
+import ScheduleInterview from "./pages/admin/programedInterview/ScheduleInterview";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
         <Route path="/mis-ofertas" element={<OffersPageClient />} />
         <Route path="/ofertas-nuevas" element={<NewOffers />} />
         <Route path="/perfil" element={<ProfilePage />} />
+        <Route path="/entrevistas" element={<ScheduleInterview />} />
 
       </Routes>
     </>

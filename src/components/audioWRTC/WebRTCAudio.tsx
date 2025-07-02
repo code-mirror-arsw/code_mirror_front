@@ -85,7 +85,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             streamRef.current = stream;
-            onStreamReady(stream); // Aquí avisamos que el stream ya está listo
+            onStreamReady(stream); 
             log("🎤 Micrófono activo");
             await createPeer();
             const offer = await peerRef.current!.createOffer();

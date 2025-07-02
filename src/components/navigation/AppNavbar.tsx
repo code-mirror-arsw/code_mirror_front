@@ -39,7 +39,10 @@ export default function AppNavbar() {
             <>
               <Link to="/crear-oferta" className="hover:text-blue-600 transition">Crear Oferta</Link>
               <Link to="/ofertas-creadas" className="hover:text-blue-600 transition">Ofertas Creadas</Link>
+              <Link to="/entrevistas" className="hover:text-blue-600 transition">entrevistas por programar</Link>
+
               <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
+
 
             </>
           )}

@@ -33,7 +33,6 @@ export default function InterviewLayout({
         {isAdmin ? (
           <div className="text-center text-green-600 text-xl font-semibold">
             🎙️ Eres el administrador. Puedes iniciar la sala de audio.
-            {/* Aquí podrías agregar botón para iniciar lógica de backend */}
           </div>
         ) : (
           <>
