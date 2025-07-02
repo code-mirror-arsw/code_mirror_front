@@ -11,6 +11,7 @@ import OffersPageClient from "./pages/client/OffersPage";
 import NewOffers from "./pages/client/NewOffers";
 import ProfilePage from "./pages/perfil/ProfilePage";
 import ScheduleInterview from "./pages/admin/programedInterview/ScheduleInterview";
+import VerifyOtpPage from "./pages/codeVerification/VerifyOtpPage";
 
 function App() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function App() {
     <>
       {!hideNavbar && <AppNavbar />}
       <Routes>
+        <Route path="/verificacion" element={<VerifyOtpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/room" element={<InterviewPage />} />
