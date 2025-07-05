@@ -45,6 +45,7 @@ export default function InterviewPage() {
         raw = raw.replace(/"/g, "").trim().toUpperCase(); // ADMIN
 
         setIsAdmin(raw === "ADMIN");
+        
 
         setEmail(parsed.email);
         setInterviewId(parsed.interviewId);
