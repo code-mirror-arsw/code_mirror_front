@@ -27,7 +27,7 @@ export default function ProfileCard() {
 
   useEffect(() => {
     if (!cookieId) return;
-    fetch(`http://localhost:8081/services/be/user-service/users/${cookieId}`)
+    fetch(`http://192.168.1.34:8081/services/be/user-service/users/${cookieId}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(setUser)
       .catch(console.error);
@@ -89,7 +89,7 @@ export default function ProfileCard() {
                 <div className="flex w-full gap-3">
                   <Button
                     as="a"
-                    href={`http://localhost:8081/services/be/user-service/cv/${user.id}`}
+                    href={`http://192.168.1.34:8081/services/be/user-service/cv/${user.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     size="sm"

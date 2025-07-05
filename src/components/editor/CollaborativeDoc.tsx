@@ -30,7 +30,7 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
     if (!quillRef.current) return;
 
     const ydoc     = new Y.Doc();
-    const provider = new WebsocketProvider("ws://localhost:8084/yjs", roomId, ydoc);
+    const provider = new WebsocketProvider("ws://192.168.1.34:8084/yjs", roomId, ydoc);
     const yText    = ydoc.getText("quill");
 
     const quill   = quillRef.current.getEditor();

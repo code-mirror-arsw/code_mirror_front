@@ -34,7 +34,7 @@ export default function InterviewPage() {
         if (isNaN(fechaISO.getTime())) throw new Error("Invalid date format");
         if (fechaISO > new Date())     throw new Error("Link has expired");
 
-        const url = `http://localhost:8081/services/be/user-service/users/role/email/${parsed.email}`;
+        const url = `http://192.168.1.34:8081/services/be/user-service/users/role/email/${parsed.email}`;
         const res = await fetch(url);
 
         if (!res.ok) throw new Error(`Role request failed (${res.status})`);

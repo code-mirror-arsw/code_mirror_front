@@ -20,7 +20,7 @@ const VerifyOtpPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:8280/auth/verify?code=${code}`,
+        `http://192.168.1.34:8280/auth/verify?code=${code}`,
         { method: "GET" }
       );
       const text = await res.text();

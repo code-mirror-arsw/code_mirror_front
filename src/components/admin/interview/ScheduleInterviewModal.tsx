@@ -19,7 +19,7 @@ import {
 import { InterviewDto } from './InterviewList';
 
 const BASE_URL =
-  'http://localhost:8083/services/be/interview-service/interview';
+  'http://192.168.1.34:8083/services/be/interview-service/interview';
 
 interface Props {
   interview: InterviewDto | null;

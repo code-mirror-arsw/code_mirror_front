@@ -34,7 +34,7 @@ export default function CVUploadButton({
       form.append('file', file);
 
       const res = await fetch(
-        `http://localhost:8081/services/be/user-service/cv/upload/${userId}`,
+        `http://192.168.1.34:8081/services/be/user-service/cv/upload/${userId}`,
         { method: 'POST', body: form }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

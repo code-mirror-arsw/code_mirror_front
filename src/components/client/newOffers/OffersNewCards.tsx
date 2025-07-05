@@ -35,7 +35,7 @@ export default function OffersNewCards() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8080/services/be/offer-service/offers/newOffers?page=${page - 1}`,
+          `http://192.168.1.34:8080/services/be/offer-service/offers/newOffers?page=${page - 1}`,
           { signal: ctrl.signal }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

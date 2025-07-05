@@ -21,7 +21,7 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8280/auth/login", {
+      const res = await fetch("http://192.168.1.34:8280/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

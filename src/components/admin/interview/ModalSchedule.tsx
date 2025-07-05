@@ -44,7 +44,7 @@ export default function ModalSchedule({
     ).padStart(2, "0")}`;
     const dateTime = `${d}T${time}:00`;
     await fetch(
-      `http://localhost:8083/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
+      `http://192.168.1.34:8083/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
         dateTime
       )}`,
       { method: "PUT" }

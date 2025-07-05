@@ -27,7 +27,7 @@ export default function OfferModal({ visible, onClose, offerId }: Props) {
     setError('');
     try {
       const res = await fetch(
-        `http://localhost:8080/services/be/offer-service/offers/${offerId}/participants?intervieweeId=${intervieweeId}`,
+        `http://192.168.1.34:8080/services/be/offer-service/offers/${offerId}/participants?intervieweeId=${intervieweeId}`,
         { method: 'POST' }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

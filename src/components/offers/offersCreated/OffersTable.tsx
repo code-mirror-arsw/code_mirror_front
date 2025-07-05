@@ -37,7 +37,7 @@ export default function OfferTable() {
     if (!userEmail) return;
 
     fetch(
-      `http://localhost:8080/services/be/offer-service/offers/email/${userEmail}?page=${
+      `http://192.168.1.34:8080/services/be/offer-service/offers/email/${userEmail}?page=${
         page - 1
       }`
     )

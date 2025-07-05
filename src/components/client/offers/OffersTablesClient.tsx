@@ -41,7 +41,7 @@ export default function OffersTablesClient() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8080/services/be/offer-service/offers/clientEmail/${userEmail}?page=${
+          `http://192.168.1.34:8080/services/be/offer-service/offers/clientEmail/${userEmail}?page=${
             page - 1
           }&size=10`,
           { signal: controller.signal }

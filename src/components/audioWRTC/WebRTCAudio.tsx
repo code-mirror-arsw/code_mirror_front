@@ -51,7 +51,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
     };
 
     const connect = async () => {
-      const socket = new SockJS("http://localhost:8084/ws");
+      const socket = new SockJS("http://192.168.1.34:8084/ws");
       const stompClient = Stomp.over(socket);
       stompClient.debug = () => {};
       stompClient.connect(

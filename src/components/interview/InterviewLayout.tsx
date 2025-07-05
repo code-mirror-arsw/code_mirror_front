@@ -36,7 +36,7 @@ export default function InterviewLayout({
 
   const startRoom = async () => {
     try {
-      const res = await fetch("http://localhost:8084/room/start", {
+      const res = await fetch("http://192.168.1.34:8084/room/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -61,7 +61,7 @@ export default function InterviewLayout({
 
     const fetchExistingRoom = async () => {
       try {
-        const res = await fetch(`http://localhost:8084/room/${interviewId}`);
+        const res = await fetch(`http://192.168.1.34:8084/room/${interviewId}`);
         if (res.ok) {
           const { roomId: id } = await res.json();
           setRoomId(id);

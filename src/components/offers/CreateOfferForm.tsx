@@ -43,7 +43,7 @@ export default function CreateOfferForm() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/services/be/offer-service/offers', {
+      const response = await fetch('http://192.168.1.34:8080/services/be/offer-service/offers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
