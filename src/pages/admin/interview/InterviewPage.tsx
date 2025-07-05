@@ -9,14 +9,14 @@ function useQuery() {
 
 export default function InterviewPage() {
   const query = useQuery();
-  const data = query.get("data");
+  const data  = query.get("data");
 
-  const [valid, setValid] = useState(false);
-  const [email, setEmail] = useState("");
-  const [interviewId, setInterviewId] = useState("");
+  const [valid,  setValid]  = useState(false);
+  const [email,  setEmail]  = useState("");
+  const [interviewId,  setInterviewId]  = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [error, setError] = useState("");
+  const [error,  setError]  = useState("");
 
   useEffect(() => {
     if (!data) {
@@ -27,18 +27,24 @@ export default function InterviewPage() {
     (async () => {
       try {
         const decrypted = await decryptAESBase64Url(data);
-        const parsed = parseInterviewData(decrypted);
+        const parsed    = parseInterviewData(decrypted);
         console.log("[🔍 Desencriptado]:", parsed);
 
         const fechaISO = new Date(parsed.fecha);
         if (isNaN(fechaISO.getTime())) throw new Error("Invalid date format");
+        if (fechaISO > new Date())     throw new Error("Link has expired");
 
-        const now = new Date();
-        if (fechaISO > now) throw new Error("Link has expired");
+        const url = `http://localhost:8081/services/be/user-service/users/role/email/${parsed.email}`;
+        const res = await fetch(url);
 
-        const response = await fetch(`http://localhost:8081/services/be/user-service/role/email/${parsed.email}`);
-        const role = await response.text();
-        setIsAdmin(role.trim() === "ADMIN");
+        if (!res.ok) throw new Error(`Role request failed (${res.status})`);
+
+        let raw = await res.text();              // ejemplo:  "ADMIN"\r\n
+        console.log("↩️ raw text:", JSON.stringify(raw));
+
+        raw = raw.replace(/"/g, "").trim().toUpperCase(); // ADMIN
+
+        setIsAdmin(raw === "ADMIN");
 
         setEmail(parsed.email);
         setInterviewId(parsed.interviewId);

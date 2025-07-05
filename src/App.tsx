@@ -12,6 +12,7 @@ import NewOffers from "./pages/client/NewOffers";
 import ProfilePage from "./pages/perfil/ProfilePage";
 import ScheduleInterview from "./pages/admin/programedInterview/ScheduleInterview";
 import VerifyOtpPage from "./pages/codeVerification/VerifyOtpPage";
+import "./editor/quillModules";  
 
 function App() {
   const location = useLocation();

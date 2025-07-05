@@ -9,8 +9,13 @@ import {
   Button,
   DatePicker,
   TimeInput,
-} from '@heroui/react';  
+} from '@heroui/react';
 import { useState } from 'react';
+import {
+  CalendarDate, 
+  Time,         
+} from '@internationalized/date';
+
 import { InterviewDto } from './InterviewList';
 
 const BASE_URL =
@@ -27,8 +32,8 @@ export default function ScheduleInterviewModal({
   onClose,
   onSuccess,
 }: Props) {
-  const [date, setDate] = useState<Date | null>(null);
-  const [time, setTime] = useState('');
+  const [date, setDate] = useState<CalendarDate | null>(null);
+  const [time, setTime] = useState<Time | null>(null);
   const [saving, setSaving] = useState(false);
 
   if (!interview) return null;
@@ -37,9 +42,16 @@ export default function ScheduleInterviewModal({
     if (!date || !time) return;
     setSaving(true);
 
-    const iso = new Date(
-      `${date.toISOString().split('T')[0]}T${time}`,
-    ).toISOString();
+    const combined = new Date(
+      date.year,
+      date.month - 1, 
+      date.day,
+      time.hour,
+      time.minute,
+      time.second ?? 0,
+    );
+
+    const iso = combined.toISOString(); 
 
     try {
       const res = await fetch(
@@ -61,11 +73,11 @@ export default function ScheduleInterviewModal({
     <Modal
       isOpen={!!interview}
       onOpenChange={onClose}
-      backdrop="blur"          /* difumina la página */
+      backdrop="blur"
       placement="center"
-      className="p-0"          /* quita paddings extra */
+      className="p-0"
     >
-      <ModalContent className="max-w-sm w-full"> {/* ≤ 400 px */}
+      <ModalContent className="max-w-sm w-full">
         {() => (
           <>
             <ModalHeader className="pb-0 text-base font-semibold">
@@ -75,16 +87,17 @@ export default function ScheduleInterviewModal({
             <ModalBody className="space-y-4 pt-2">
               <DatePicker
                 label="Fecha"
-                value={date ?? undefined}
+                value={date}
                 onChange={setDate}
                 radius="sm"
                 className="w-full"
               />
+
               <TimeInput
                 label="Hora"
-                placeholder="HH:MM"
                 value={time}
-                onChange={(e) => setTime(e.target.value)}
+                onChange={setTime}
+                granularity="minute"
                 radius="sm"
                 className="w-full"
               />
