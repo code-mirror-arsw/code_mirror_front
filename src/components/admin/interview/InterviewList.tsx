@@ -10,9 +10,12 @@ import {
   Pagination,
   Spinner,
 } from "@heroui/react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 import ModalSchedule from "./ModalSchedule";
 import { OfferListCard } from "../../offers/offersCreated/OfferListCard";
+import { ErrorModal } from "../../message/ErrorModal";
 
 export interface InterviewDto {
   id: string;
@@ -26,7 +29,7 @@ export interface InterviewDto {
 }
 
 const BASE_URL =
-  "http://192.168.1.34:8083/services/be/interview-service/interview";
+  "http://localhost:8280/services/be/interview-service/interview";
 
 interface Props {
   adminEmail: string;
@@ -39,21 +42,49 @@ export default function InterviewList({ adminEmail }: Props) {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<InterviewDto | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    const token = Cookies.get("accessToken");
+
     try {
       const res = await fetch(
-        `${BASE_URL}/adminEmail/${adminEmail}?page=${page}`
+        `${BASE_URL}/adminEmail/${adminEmail}?page=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
+      if (res.status === 401) {
+        setErrorMessage("Debes tener iniciada sesión.");
+        setErrorOpen(true);
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        Cookies.remove("userRole");
+        Cookies.remove("userEmail");
+        Cookies.remove("id");
+        setTimeout(() => navigate("/"), 2000);
+        return;
+      }
+
       if (!res.ok) throw new Error();
+
       const data = await res.json();
-      setInterviews(data.content);
-      setPages(data.totalPages);
+      setInterviews(Array.isArray(data.content) ? data.content : []);
+      setPages(data.totalPages ?? 1);
+    } catch {
+      setErrorMessage("Ocurrió un error al obtener las entrevistas.");
+      setErrorOpen(true);
+      setInterviews([]);
     } finally {
       setLoading(false);
     }
-  }, [adminEmail, page]);
+  }, [adminEmail, page, navigate]);
 
   useEffect(() => {
     fetchData();
@@ -87,39 +118,20 @@ export default function InterviewList({ adminEmail }: Props) {
                 className="min-w-[850px] table-fixed"
               >
                 <TableHeader>
-                  <TableColumn className="w-2/5 text-center">
-                    DESCRIPCIÓN
-                  </TableColumn>
-                  <TableColumn className="w-2/5 text-center">
-                    PARTICIPANTES
-                  </TableColumn>
-                  <TableColumn className="w-1/5 text-center">
-                    ADMIN&nbsp;E‑MAIL
-                  </TableColumn>
-                  <TableColumn className="w-[140px] text-center">
-                    ACCIÓN
-                  </TableColumn>
+                  <TableColumn className="w-2/5 text-center">DESCRIPCIÓN</TableColumn>
+                  <TableColumn className="w-2/5 text-center">PARTICIPANTES</TableColumn>
+                  <TableColumn className="w-1/5 text-center">ADMIN&nbsp;E‑MAIL</TableColumn>
+                  <TableColumn className="w-[140px] text-center">ACCIÓN</TableColumn>
                 </TableHeader>
 
                 <TableBody emptyContent="No hay entrevistas pendientes">
                   {interviews.map((i) => (
                     <TableRow key={i.id} className="text-center">
-                      <TableCell className="whitespace-normal break-words">
-                        {i.description}
-                      </TableCell>
-                      <TableCell className="whitespace-normal break-words">
-                        {i.participants.join(", ")}
-                      </TableCell>
-                      <TableCell className="break-words">
-                        {i.adminEmail}
-                      </TableCell>
+                      <TableCell className="whitespace-normal break-words">{i.description}</TableCell>
+                      <TableCell className="whitespace-normal break-words">{i.participants.join(", ")}</TableCell>
+                      <TableCell className="break-words">{i.adminEmail}</TableCell>
                       <TableCell>
-                        <Button
-                          size="sm"
-                          color="primary"
-                          radius="sm"
-                          onPress={() => openModal(i)}
-                        >
+                        <Button size="sm" color="primary" radius="sm" onPress={() => openModal(i)}>
                           Programar
                         </Button>
                       </TableCell>
@@ -131,24 +143,16 @@ export default function InterviewList({ adminEmail }: Props) {
 
             {pages > 1 && (
               <div className="mt-6 flex justify-center">
-                <Pagination
-                  total={pages}
-                  page={page + 1}
-                  onChange={(p) => setPage(p - 1)}
-                  size="sm"
-                />
+                <Pagination total={pages} page={page + 1} onChange={(p) => setPage(p - 1)} size="sm" />
               </div>
             )}
           </>
         )}
       </OfferListCard>
 
-      <ModalSchedule
-        isOpen={modalOpen}
-        onOpenChange={setModalOpen}
-        interview={selected}
-        onScheduled={handleScheduled}
-      />
+      <ModalSchedule isOpen={modalOpen} onOpenChange={setModalOpen} interview={selected} onScheduled={handleScheduled} />
+
+      <ErrorModal open={errorOpen} message={errorMessage} onClose={() => setErrorOpen(false)} />
     </div>
   );
 }

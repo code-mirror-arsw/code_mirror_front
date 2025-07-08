@@ -5,7 +5,12 @@ interface Props {
   message: string;
   onClose: () => void;
 }
-
 export const ErrorModal = ({ open, message, onClose }: Props) => (
-  <Modal open={open} onClose={onClose} title="❌ Error" message={message} color="error" />
+  <Modal
+    open={open}
+    onClose={onClose}
+    title="❌ Error"
+    message={message}
+    color="error"
+  />
 );

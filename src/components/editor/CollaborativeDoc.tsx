@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+import Cookies from "js-cookie";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { QuillBinding } from "y-quill";
 import ReactQuill, { Quill } from "react-quill";
 import QuillCursors from "quill-cursors";
 
-
-
-import "./css/code-editor.css";        
+import "./css/code-editor.css";
 
 Quill.register("modules/cursors", QuillCursors);
 
 interface Props {
   roomId: string;
-  userId: string;          
+  userId: string;
 }
 
 interface TypingUser {
@@ -29,8 +28,15 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
   useEffect(() => {
     if (!quillRef.current) return;
 
+
+
     const ydoc     = new Y.Doc();
-    const provider = new WebsocketProvider("ws://192.168.1.34:8084/yjs", roomId, ydoc);
+    const provider = new WebsocketProvider(
+      "ws://localhost:8280/services/be/stream-service/yjs",
+      roomId,
+      ydoc
+    );
+
     const yText    = ydoc.getText("quill");
 
     const quill   = quillRef.current.getEditor();
@@ -42,28 +48,22 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
     ];
 
     new QuillBinding(yText, quill, provider.awareness);
-
     provider.awareness.setLocalStateField("user", { name: userId, color });
 
     const updateUI = () => {
       const list: TypingUser[] = [];
-
       provider.awareness.getStates().forEach((state, id) => {
-        if (!state.user) return;
-        if (!state.selection) return;
+        if (!state.user || !state.selection) return;
 
         if (!cursors.cursors().some((c: any) => c.id === String(id))) {
           cursors.createCursor(String(id), state.user.name, state.user.color);
         }
         cursors.moveCursor(String(id), state.selection);
-
         list.push({ id: String(id), ...state.user });
       });
-
       setTyping(list);
     };
     provider.awareness.on("change", updateUI);
-
     quill.on("selection-change", sel =>
       provider.awareness.setLocalStateField("selection", sel)
     );

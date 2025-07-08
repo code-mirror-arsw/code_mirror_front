@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
@@ -12,8 +13,30 @@ export const LoginForm = () => {
   const [errorOpen, setErrorOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const search = new URLSearchParams(location.search);
+  const nextPath = search.get("next") || "/";
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const parseErrorMessage = (raw: string): string => {
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    let msg = raw;
+    if (jsonMatch) {
+      try {
+        const obj = JSON.parse(jsonMatch[0]);
+        if (obj && obj.message) msg = obj.message;
+      } catch {}
+    } else {
+      const m = raw.match(/"message"\s*:\s*"([^\"]+)"/);
+      if (m) msg = m[1];
+    }
+    if (/user not found/i.test(msg)) msg = "Usuario no encontrado";
+    return msg;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,17 +44,15 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://192.168.1.34:8280/auth/login", {
+      const res = await fetch("http://localhost:8280/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (!res.ok) {
-        const errData = await res.json(); 
-        throw new Error(errData.message || "Error al iniciar sesión");
+        const text = await res.text();
+        throw new Error(parseErrorMessage(text));
       }
 
       const data = await res.json();
@@ -40,22 +61,16 @@ export const LoginForm = () => {
       Cookies.set("refreshToken", data.refreshToken, { expires: 1, path: "/" });
       Cookies.set("userRole", data.role, { expires: 1, path: "/" });
       Cookies.set("userEmail", data.email, { expires: 1, path: "/" });
-      Cookies.set("id" , data.id, { expires: 1, path: "/" })
+      Cookies.set("id", data.id, { expires: 1, path: "/" });
 
       setModalMsg("✅ Sesión iniciada correctamente");
       setSuccessOpen(true);
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1500);
+      setTimeout(() => navigate(nextPath, { replace: true }), 1200);
     } catch (err: any) {
-      let message = "Error al iniciar sesión";
-      if (err instanceof Error) {
-        message = err.message;
-      }
-  setModalMsg(message);
-  setErrorOpen(true);
-}
-finally {
+      const message = err instanceof Error ? err.message : "Error al iniciar sesión";
+      setModalMsg(message);
+      setErrorOpen(true);
+    } finally {
       setLoading(false);
     }
   };
@@ -101,14 +116,12 @@ finally {
         <Button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-xl text-lg font-semibold text-white transition-colors duration-300
-            ${loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary-dark"}`}
+          className={`w-full py-3 rounded-xl text-lg font-semibold text-white transition-colors duration-300 ${loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary-dark"}`}
         >
           {loading ? "Cargando..." : "Iniciar sesión"}
         </Button>
       </form>
 
-      {/* Modales */}
       <SuccessModal open={successOpen} message={modalMsg} onClose={() => setSuccessOpen(false)} />
       <ErrorModal open={errorOpen} message={modalMsg} onClose={() => setErrorOpen(false)} />
     </>
