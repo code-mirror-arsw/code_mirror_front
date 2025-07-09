@@ -10,100 +10,94 @@ interface WebRTCAudioProps {
 
 export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAudioProps) {
   const peerRef = useRef<RTCPeerConnection | null>(null);
-  const stompClientRef = useRef<any>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const stompRef = useRef<any>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
-    const log = (msg: string) => console.log("[WebRTC]", msg);
-
     const sendSignal = (payload: any) => {
-      stompClientRef.current.send(
+      stompRef.current.send(
         `/app/room/${roomId}`,
         {},
         JSON.stringify({ userId, roomId, payload })
       );
     };
 
-    const createPeer = async () => {
+    const createPeer = () => {
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
+      localStreamRef.current?.getTracks().forEach(t => pc.addTrack(t, localStreamRef.current!));
 
-      streamRef.current?.getTracks().forEach((track) => {
-        pc.addTrack(track, streamRef.current!);
-      });
-
-      pc.onicecandidate = (event) => {
-        if (event.candidate) {
-          sendSignal({ candidate: event.candidate });
-        }
+      pc.onicecandidate = (e) => {
+        if (e.candidate) sendSignal({ candidate: e.candidate });
       };
-
-      pc.ontrack = (event) => {
+      pc.ontrack = (e) => {
         const audio = new Audio();
-        audio.srcObject = event.streams[0];
+        audio.srcObject = e.streams[0];
         audio.autoplay = true;
-        log("🎧 Audio remoto recibido");
       };
 
       peerRef.current = pc;
       return pc;
     };
 
-    const connect = async () => {
+    const start = async () => {
       const socket = new SockJS("http://localhost:8280/services/be/stream-service/ws");
-      const stompClient = Stomp.over(socket);
-      stompClient.debug = () => {};
-      stompClient.connect(
-        {},
-        async () => {
-          log("🌐 Conectado a WebSocket con SockJS");
-          stompClientRef.current = stompClient;
+      const stomp = Stomp.over(socket);
+      stomp.debug = () => {};
+      stompRef.current = stomp;
 
-          stompClient.subscribe(`/topic/room/${roomId}`, async (message) => {
-            const signal = JSON.parse(message.body);
-            if (signal.userId === userId) return;
+      stomp.connect({}, async () => {
+        const sub = stomp.subscribe(`/topic/room/${roomId}`, async (msg: any) => {
+          const { userId: uid, payload } = JSON.parse(msg.body);
+          if (uid === userId) return;
+          const pc = peerRef.current ?? createPeer();
 
-            log("📡 Señal recibida");
-
-            if (!peerRef.current) await createPeer();
-            const pc = peerRef.current!;
-            const payload = signal.payload;
-
-            if (payload.type === "offer") {
-              await pc.setRemoteDescription(new RTCSessionDescription(payload));
-              const answer = await pc.createAnswer();
-              await pc.setLocalDescription(answer);
-              sendSignal(answer);
-            } else if (payload.type === "answer") {
-              await pc.setRemoteDescription(new RTCSessionDescription(payload));
-            } else if (payload.candidate) {
-              await pc.addIceCandidate(new RTCIceCandidate(payload.candidate));
-            }
-          });
-
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            streamRef.current = stream;
-            onStreamReady(stream); 
-            log("🎤 Micrófono activo");
-            await createPeer();
-            const offer = await peerRef.current!.createOffer();
-            await peerRef.current!.setLocalDescription(offer);
-            sendSignal(offer);
-          } catch (err) {
-            log("❌ Error al acceder al micrófono: " + err);
+          if (payload.type === "offer") {
+            await pc.setRemoteDescription(payload);
+            const answer = await pc.createAnswer();
+            answer.sdp = answer.sdp!
+              .replace(/useinbandfec=1/, "useinbandfec=1; stereo=1; maxaveragebitrate=510000");
+            await pc.setLocalDescription(answer);
+            sendSignal(answer);
+          } else if (payload.type === "answer") {
+            await pc.setRemoteDescription(payload);
+          } else if (payload.candidate) {
+            await pc.addIceCandidate(payload.candidate);
           }
-        }
-      );
+        });
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 2,
+            sampleRate: 48000,
+            sampleSize: 16,
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            latency: 0,
+          },
+          video: false,
+        });
+
+        localStreamRef.current = stream;
+        onStreamReady(stream);
+
+        const pc = createPeer();
+        const offer = await pc.createOffer();
+        offer.sdp = offer.sdp!
+          .replace(/useinbandfec=1/, "useinbandfec=1; stereo=1; maxaveragebitrate=510000");
+        await pc.setLocalDescription(offer);
+        sendSignal(offer);
+      });
     };
 
-    connect();
+    start();
 
     return () => {
-      stompClientRef.current?.disconnect();
+      stompRef.current?.disconnect();
       peerRef.current?.close();
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      localStreamRef.current?.getTracks().forEach(t => t.stop());
     };
   }, [roomId, userId, onStreamReady]);
 
