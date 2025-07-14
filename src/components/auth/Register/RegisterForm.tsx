@@ -39,7 +39,7 @@ export default function RegisterForm() {
 
       const params = new URLSearchParams({ password: form.password });
 
-      const response = await fetch(`http://localhost:8280/auth/register?${params.toString()}`, {
+      const response = await fetch(`https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/auth/register?${params.toString()}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

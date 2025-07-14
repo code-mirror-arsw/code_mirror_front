@@ -42,7 +42,7 @@ export default function OffersNewCards() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8280/services/be/offer-service/offers/newOffers?page=${page - 1}`,
+          `https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/offer-service/offers/newOffers?page=${page - 1}`,
           {
             signal: ctrl.signal,
             headers: {

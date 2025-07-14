@@ -41,7 +41,7 @@ export default function InterviewLayout({
 
   const startRoom = async () => {
     try {
-      const res = await fetch("http://localhost:8280/services/be/stream-service/room/start", {
+      const res = await fetch("https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export default function InterviewLayout({
 
     const fetchExistingRoom = async () => {
       try {
-        const res = await fetch(`http://localhost:8280/services/be/stream-service/room/${interviewId}`, {
+        const res = await fetch(`https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/stream-service/room/${interviewId}`, {
           signal: controller.signal,
           headers: { Authorization: `Bearer ${token}` },
         });

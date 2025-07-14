@@ -54,7 +54,7 @@ export default function ModalSchedule({
 
     try {
       const res = await fetch(
-        `http://localhost:8280/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
+        `https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
           dateTime
         )}`,
         {

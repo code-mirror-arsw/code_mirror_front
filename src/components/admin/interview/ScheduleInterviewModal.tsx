@@ -18,7 +18,7 @@ import { ErrorModal } from "../../message/ErrorModal";
 import { InterviewDto } from "./InterviewList";
 
 const BASE_URL =
-  "http://localhost:8280/services/be/interview-service/interview";
+  "https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/interview-service/interview";
 
 interface Props {
   interview: InterviewDto | null;
