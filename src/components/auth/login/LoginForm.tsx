@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import Cookies from "js-cookie";
@@ -14,7 +14,7 @@ export const LoginForm = () => {
   const [modalMsg, setModalMsg] = useState("");
 
   const location = useLocation();
-  const navigate = useNavigate();
+ 
 
   const search = new URLSearchParams(location.search);
   const nextPath = search.get("next") || "/";

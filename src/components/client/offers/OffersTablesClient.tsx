@@ -14,6 +14,7 @@ import { OfferListCardClient } from "../../client/offers/OfferListCardClient";
 import { ErrorModal } from "../../message/ErrorModal";
 
 interface OfferJobDto {
+  id: string;
   company: string;
   title: string;
   description: string;

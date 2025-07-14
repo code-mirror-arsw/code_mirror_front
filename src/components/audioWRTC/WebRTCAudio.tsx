@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
-import Cookies from "js-cookie";
 
 interface WebRTCAudioProps {
   userId: string;
@@ -13,6 +12,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const stompRef = useRef<any>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
+  const subscriptionRef = useRef<any>(null);
 
   useEffect(() => {
     const sendSignal = (payload: any) => {
@@ -49,7 +49,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
       stompRef.current = stomp;
 
       stomp.connect({}, async () => {
-        const sub = stomp.subscribe(`/topic/room/${roomId}`, async (msg: any) => {
+        subscriptionRef.current = stomp.subscribe(`/topic/room/${roomId}`, async (msg: any) => {
           const { userId: uid, payload } = JSON.parse(msg.body);
           if (uid === userId) return;
           const pc = peerRef.current ?? createPeer();
@@ -57,8 +57,10 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
           if (payload.type === "offer") {
             await pc.setRemoteDescription(payload);
             const answer = await pc.createAnswer();
-            answer.sdp = answer.sdp!
-              .replace(/useinbandfec=1/, "useinbandfec=1; stereo=1; maxaveragebitrate=510000");
+            answer.sdp = answer.sdp!.replace(
+              /useinbandfec=1/,
+              "useinbandfec=1; stereo=1; maxaveragebitrate=510000"
+            );
             await pc.setLocalDescription(answer);
             sendSignal(answer);
           } else if (payload.type === "answer") {
@@ -76,7 +78,6 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
             echoCancellation: false,
             noiseSuppression: false,
             autoGainControl: false,
-            latency: 0,
           },
           video: false,
         });
@@ -86,8 +87,10 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
 
         const pc = createPeer();
         const offer = await pc.createOffer();
-        offer.sdp = offer.sdp!
-          .replace(/useinbandfec=1/, "useinbandfec=1; stereo=1; maxaveragebitrate=510000");
+        offer.sdp = offer.sdp!.replace(
+          /useinbandfec=1/,
+          "useinbandfec=1; stereo=1; maxaveragebitrate=510000"
+        );
         await pc.setLocalDescription(offer);
         sendSignal(offer);
       });
@@ -96,6 +99,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
     start();
 
     return () => {
+      subscriptionRef.current?.unsubscribe();
       stompRef.current?.disconnect();
       peerRef.current?.close();
       localStreamRef.current?.getTracks().forEach(t => t.stop());
