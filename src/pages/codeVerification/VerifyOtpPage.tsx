@@ -29,7 +29,7 @@ const VerifyOtpPage = () => {
     const token = Cookies.get("accessToken");
 
     try {
-      const res = await fetch(`https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/auth/verify?code=${code}`, {
+      const res = await fetch(`http://20.63.88.120/8280/auth/verify?code=${code}`, {
         method: "GET",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });

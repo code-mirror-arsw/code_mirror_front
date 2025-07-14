@@ -29,7 +29,7 @@ export interface InterviewDto {
 }
 
 const BASE_URL =
-  "https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/interview-service/interview";
+  "http://20.63.88.120/8280/services/be/interview-service/interview";
 
 interface Props {
   adminEmail: string;

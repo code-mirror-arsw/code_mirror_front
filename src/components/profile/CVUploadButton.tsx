@@ -35,7 +35,7 @@ export default function CVUploadButton({ userId, onUploaded, uriCvFile, children
       const form = new FormData();
       form.append("file", file);
 
-      const res = await fetch(`https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/user-service/cv/upload/${userId}`, {
+      const res = await fetch(`http://20.63.88.120/8280/services/be/user-service/cv/upload/${userId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: form,

@@ -32,7 +32,7 @@ export default function OfferModal({ visible, onClose, offerId }: Props) {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/offer-service/offers/${offerId}/participants?intervieweeId=${intervieweeId}`,
+        `http://20.63.88.120/8280/services/be/offer-service/offers/${offerId}/participants?intervieweeId=${intervieweeId}`,
         {
           method: "POST",
           headers: {

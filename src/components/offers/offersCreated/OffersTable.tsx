@@ -48,7 +48,7 @@ export default function OfferTable() {
     (async () => {
       try {
         const res = await fetch(
-          `https://codemirrorback-f9hub9hxd4aecwfz.canadacentral-01.azurewebsites.net/services/be/offer-service/offers/email/${userEmail}?page=${page - 1}`,
+          `http://20.63.88.120/8280/services/be/offer-service/offers/email/${userEmail}?page=${page - 1}`,
           {
             signal: controller.signal,
             headers: {
