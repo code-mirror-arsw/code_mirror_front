@@ -65,7 +65,10 @@ export const LoginForm = () => {
 
       setModalMsg("✅ Sesión iniciada correctamente");
       setSuccessOpen(true);
-      setTimeout(() => navigate(nextPath, { replace: true }), 1200);
+      setTimeout(() => {
+        window.location.href = nextPath;
+      }, 1200);
+
     } catch (err: any) {
       const message = err instanceof Error ? err.message : "Error al iniciar sesión";
       setModalMsg(message);

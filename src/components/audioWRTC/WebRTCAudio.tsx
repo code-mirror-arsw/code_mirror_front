@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import Cookies from "js-cookie";
 
 interface WebRTCAudioProps {
   userId: string;
@@ -42,7 +43,7 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
     };
 
     const start = async () => {
-      const socket = new SockJS("http://localhost:8280/services/be/stream-service/ws");
+      const socket = new SockJS(`http://localhost:8280/services/be/stream-service/ws`);
       const stomp = Stomp.over(socket);
       stomp.debug = () => {};
       stompRef.current = stomp;
