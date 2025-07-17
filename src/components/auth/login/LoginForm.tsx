@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useLocation} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
-import Cookies from "js-cookie";
 import { SuccessModal } from "../../../components/message/SuccessModal";
 import { ErrorModal } from "../../../components/message/ErrorModal";
 
@@ -14,10 +14,11 @@ export const LoginForm = () => {
   const [modalMsg, setModalMsg] = useState("");
 
   const location = useLocation();
- 
+  const navigate = useNavigate();
 
   const search = new URLSearchParams(location.search);
-  const nextPath = search.get("next") || "/";
+  const rawNext = search.get("next");
+  const nextPath = rawNext && decodeURIComponent(rawNext).startsWith("/") ? decodeURIComponent(rawNext) : "/";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,7 +45,7 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://20.63.88.120/8280/auth/login", {
+      const res = await fetch("http://localhost:8280/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -65,10 +66,10 @@ export const LoginForm = () => {
 
       setModalMsg("✅ Sesión iniciada correctamente");
       setSuccessOpen(true);
-      setTimeout(() => {
-        window.location.href = nextPath;
-      }, 1200);
 
+      setTimeout(() => {
+        navigate(nextPath, { replace: true }); // Redirección segura
+      }, 1200);
     } catch (err: any) {
       const message = err instanceof Error ? err.message : "Error al iniciar sesión";
       setModalMsg(message);
@@ -80,10 +81,7 @@ export const LoginForm = () => {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6 p-8 rounded-2xl shadow-lg bg-lightmode-card dark:bg-card transition-colors duration-300"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6 p-8 rounded-2xl shadow-lg bg-lightmode-card dark:bg-card transition-colors duration-300">
         <div>
           <label htmlFor="email" className="block mb-2 font-medium text-gray-800 dark:text-gray-200">
             Correo electrónico
@@ -96,7 +94,7 @@ export const LoginForm = () => {
             value={form.email}
             onChange={handleChange}
             required
-            className="w-full rounded-md border px-4 py-3 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-md border px-4 py-3 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -112,14 +110,16 @@ export const LoginForm = () => {
             value={form.password}
             onChange={handleChange}
             required
-            className="w-full rounded-md border px-4 py-3 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-md border px-4 py-3 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <Button
           type="submit"
           disabled={loading}
-          className={`w-full py-3 rounded-xl text-lg font-semibold text-white transition-colors duration-300 ${loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary-dark"}`}
+          className={`w-full py-3 rounded-xl text-lg font-semibold text-white transition-colors duration-300 ${
+            loading ? "bg-primary/50 cursor-not-allowed" : "bg-primary hover:bg-primary-dark"
+          }`}
         >
           {loading ? "Cargando..." : "Iniciar sesión"}
         </Button>

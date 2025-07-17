@@ -10,6 +10,7 @@ export default function CreateOfferForm() {
     title: "",
     description: "",
     maxCandidates: 1,
+    language: "java",
   });
 
   const [successOpen, setSuccessOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function CreateOfferForm() {
   const navigate = useNavigate();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -42,7 +43,7 @@ export default function CreateOfferForm() {
 
     try {
       const res = await fetch(
-        "http://20.63.88.120/8280/services/be/offer-service/offers",
+        "http://localhost:8280/services/be/offer-service/offers",
         {
           method: "POST",
           headers: {
@@ -71,7 +72,13 @@ export default function CreateOfferForm() {
       }
 
       setSuccessOpen(true);
-      setForm({ company: "", title: "", description: "", maxCandidates: 1 });
+      setForm({
+        company: "",
+        title: "",
+        description: "",
+        maxCandidates: 1,
+        language: "java",
+      });
     } catch (error: any) {
       let msg = error.message;
       try {
@@ -108,6 +115,19 @@ export default function CreateOfferForm() {
         <div>
           <label className="block font-medium mb-1">Máximo de Candidatos:</label>
           <input type="number" name="maxCandidates" value={form.maxCandidates} min="1" onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded" />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Lenguaje:</label>
+          <select name="language" value={form.language} onChange={handleChange} required className="w-full p-2 border border-gray-300 rounded">
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="csharp">C#</option>
+            <option value="cpp">C++</option>
+            <option value="php">php</option>
+            <option value="go">go</option>
+          </select>
         </div>
 
         <div className="text-center">

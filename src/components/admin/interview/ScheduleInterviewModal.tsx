@@ -18,7 +18,7 @@ import { ErrorModal } from "../../message/ErrorModal";
 import { InterviewDto } from "./InterviewList";
 
 const BASE_URL =
-  "http://20.63.88.120/8280/services/be/interview-service/interview";
+  "http://localhost:8280/services/be/interview-service/interview";
 
 interface Props {
   interview: InterviewDto | null;

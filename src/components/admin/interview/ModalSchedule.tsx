@@ -54,7 +54,7 @@ export default function ModalSchedule({
 
     try {
       const res = await fetch(
-        `http://20.63.88.120/8280/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
+        `http://localhost:8280/services/be/interview-service/interview/${interview.id}/schedule?dateTime=${encodeURIComponent(
           dateTime
         )}`,
         {
@@ -88,7 +88,8 @@ export default function ModalSchedule({
   };
 
   return (
-    <>
+    <><div className="min-h-screen flex items-center justify-center bg-lightmode-background dark:bg-background 
+    text-lightmode-text dark:text-light transition-colors duration-300 px-4">
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -152,6 +153,7 @@ export default function ModalSchedule({
       </Modal>
 
       <ErrorModal open={errorOpen} message={errorMessage} onClose={() => setErrorOpen(false)} />
+      </div>
     </>
   );
 }

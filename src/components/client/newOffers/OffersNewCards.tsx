@@ -15,6 +15,7 @@ export interface OfferJobDto {
   adminEmail: string;
   createdAt: string;
   id: string;
+  language: string;
 }
 
 interface PageResponse {
@@ -42,7 +43,7 @@ export default function OffersNewCards() {
     (async () => {
       try {
         const res = await fetch(
-          `http://20.63.88.120/8280/services/be/offer-service/offers/newOffers?page=${page - 1}`,
+          `http://localhost:8280/services/be/offer-service/offers/newOffers?page=${page - 1}`,
           {
             signal: ctrl.signal,
             headers: {
@@ -118,6 +119,11 @@ export default function OffersNewCards() {
                   </span>
                   <span className="text-xs text-gray-500 dark:text-blue-300">
                     {o.company}
+                  </span>
+                </div>
+                <div className="mt-2 text-right">
+                  <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                    {o.language}
                   </span>
                 </div>
               </article>

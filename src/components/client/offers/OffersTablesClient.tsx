@@ -21,6 +21,7 @@ interface OfferJobDto {
   status: string;
   maxCandidates: number;
   adminEmail: string;
+  language: string;
 }
 
 interface PageResponse {
@@ -48,7 +49,7 @@ export default function OffersTablesClient() {
     (async () => {
       try {
         const res = await fetch(
-          `http://20.63.88.120/8280/services/be/offer-service/offers/clientEmail/${userEmail}?page=${page - 1}&size=10`,
+          `http://localhost:8280/services/be/offer-service/offers/clientEmail/${userEmail}?page=${page - 1}&size=10`,
           {
             signal: controller.signal,
             headers: {
@@ -94,6 +95,7 @@ export default function OffersTablesClient() {
           <TableColumn className="text-center px-4 py-3">Título</TableColumn>
           <TableColumn className="text-center px-4 py-3">Estado</TableColumn>
           <TableColumn className="text-center px-4 py-3">Max. Candidatos</TableColumn>
+          <TableColumn className="text-center px-4 py-3">Lenguaje</TableColumn>
         </TableHeader>
 
         <TableBody emptyContent="No hay ofertas registradas">
@@ -103,6 +105,7 @@ export default function OffersTablesClient() {
               <TableCell className="text-center px-4 py-2">{offer.title}</TableCell>
               <TableCell className="text-center px-4 py-2">{offer.status}</TableCell>
               <TableCell className="text-center px-4 py-2">{offer.maxCandidates}</TableCell>
+              <TableCell className="text-center px-4 py-2">{offer.language}</TableCell>
             </TableRow>
           ))}
         </TableBody>

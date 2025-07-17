@@ -14,13 +14,14 @@ import { OfferListCard } from "./OfferListCard";
 import { ErrorModal } from "../../message/ErrorModal";
 
 interface OfferJobDto {
-  id : string;
+  id: string;
   company: string;
   title: string;
   description: string;
   status: string;
   maxCandidates: number;
   adminEmail: string;
+  language: string;
 }
 
 interface PageResponse {
@@ -36,7 +37,6 @@ export default function OfferTable() {
   const [errorOpen, setErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-
   const userEmail = Cookies.get("userEmail");
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function OfferTable() {
     (async () => {
       try {
         const res = await fetch(
-          `http://20.63.88.120/8280/services/be/offer-service/offers/email/${userEmail}?page=${page - 1}`,
+          `http://localhost:8280/services/be/offer-service/offers/email/${userEmail}?page=${page - 1}`,
           {
             signal: controller.signal,
             headers: {
@@ -93,15 +93,20 @@ export default function OfferTable() {
             <TableColumn className="text-center px-4 py-3">Empresa</TableColumn>
             <TableColumn className="text-center px-4 py-3">Título</TableColumn>
             <TableColumn className="text-center px-4 py-3">Estado</TableColumn>
+            <TableColumn className="text-center px-4 py-3">Lenguaje</TableColumn>
             <TableColumn className="text-center px-4 py-3">Max. Candidatos</TableColumn>
           </TableHeader>
 
           <TableBody emptyContent="No hay ofertas registradas">
             {offers.map((offer) => (
-              <TableRow key={offer.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
+              <TableRow
+                key={offer.id}
+                className="hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-300 dark:border-gray-600"
+              >
                 <TableCell className="text-center px-4 py-2 text-gray-700 dark:text-gray-300">{offer.company}</TableCell>
                 <TableCell className="text-center px-4 py-2 text-gray-700 dark:text-gray-300">{offer.title}</TableCell>
                 <TableCell className="text-center px-4 py-2 text-gray-700 dark:text-gray-300">{offer.status}</TableCell>
+                <TableCell className="text-center px-4 py-2 text-gray-700 dark:text-gray-300">{offer.language}</TableCell>
                 <TableCell className="text-center px-4 py-2 text-gray-700 dark:text-gray-300">{offer.maxCandidates}</TableCell>
               </TableRow>
             ))}

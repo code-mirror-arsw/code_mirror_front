@@ -40,7 +40,7 @@ export default function AppNavbar() {
               <Link to="/crear-oferta" className="hover:text-blue-600 transition">Crear Oferta</Link>
               <Link to="/ofertas-creadas" className="hover:text-blue-600 transition">Ofertas Creadas</Link>
               <Link to="/entrevistas" className="hover:text-blue-600 transition">entrevistas por programar</Link>
-
+              <Link to="/resultadoAdmin" className="hover:text-blue-600 transition">Estadisticas</Link>
               <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
 
 
@@ -50,6 +50,7 @@ export default function AppNavbar() {
             <>
               <Link to="/mis-ofertas" className="hover:text-blue-600 transition">Mis Ofertas</Link>
               <Link to="/ofertas-nuevas" className="hover:text-blue-600 transition">Ofertas Nuevas</Link>
+              <Link to="/resultados" className="hover:text-blue-600 transition">Mis resultados</Link>
               <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
 
             </>

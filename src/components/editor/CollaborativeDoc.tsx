@@ -26,24 +26,15 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
   const quillRef = useRef<ReactQuill>(null);
   const [typing, setTyping] = useState<TypingUser[]>([]);
   const [isConnected, setIsConnected] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<WebsocketProvider | null>(null);
   const wsUrl = `ws://localhost:8280/services/be/stream-service/yjs`;
 
-  const saveToLocal = (delta: any) => {
-    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
-    changes.push(delta);
-    localStorage.setItem("offlineChanges", JSON.stringify(changes));
-  };
-
-  const flushLocalChanges = () => {
-    const quill = quillRef.current?.getEditor();
-    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
-    changes.forEach((delta: any) => {
-      quill?.updateContents(delta);
-    });
-    localStorage.removeItem("offlineChanges");
-  };
+  useEffect(() => {
+    const storedResult = localStorage.getItem(`submission_${roomId}`);
+    if (storedResult) setIsSubmitted(true);
+  }, [roomId]);
 
   const connect = () => {
     const ydoc = new Y.Doc();
@@ -67,8 +58,7 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
 
     const palette = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"];
     const color =
-      palette[userId.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) %
-      palette.length];
+      palette[userId.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % palette.length];
 
     new QuillBinding(yText, quill, provider.awareness);
     provider.awareness.setLocalStateField("user", { name: userId, color });
@@ -99,6 +89,21 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
     );
   };
 
+  const saveToLocal = (delta: any) => {
+    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
+    changes.push(delta);
+    localStorage.setItem("offlineChanges", JSON.stringify(changes));
+  };
+
+  const flushLocalChanges = () => {
+    const quill = quillRef.current?.getEditor();
+    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
+    changes.forEach((delta: any) => {
+      quill?.updateContents(delta);
+    });
+    localStorage.removeItem("offlineChanges");
+  };
+
   useEffect(() => {
     if (!quillRef.current) return;
     connect();
@@ -122,13 +127,21 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
             </div>
           ))}
         </div>
+
         <ReactQuill
           ref={quillRef}
           theme="snow"
           modules={modules}
+          readOnly={isSubmitted}
           placeholder="Escribe código colaborativo…"
           style={{ width: "100%", height: "95%" }}
         />
+
+        {isSubmitted && (
+          <div className="text-green-600 font-medium mt-2 text-center">
+            ✅ Código enviado
+          </div>
+        )}
       </div>
     </>
   );

@@ -13,6 +13,8 @@ import ProfilePage from "./pages/perfil/ProfilePage";
 import ScheduleInterview from "./pages/admin/programedInterview/ScheduleInterview";
 import VerifyOtpPage from "./pages/codeVerification/VerifyOtpPage";
 import "./editor/quillModules";  
+import Result from "./pages/client/Result";
+import ResultAdmin from "./pages/admin/ResultAdmin";
 
 function App() {
   const location = useLocation();
@@ -38,6 +40,8 @@ function App() {
         <Route path="/ofertas-nuevas" element={<NewOffers />} />
         <Route path="/perfil" element={<ProfilePage />} />
         <Route path="/entrevistas" element={<ScheduleInterview />} />
+        <Route path="/resultados" element={<Result />} />
+        <Route path="/resultadoAdmin" element={<ResultAdmin />} />
 
       </Routes>
     </>
