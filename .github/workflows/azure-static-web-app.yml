@@ -1,14 +1,6 @@
-name: Azure Static Web Apps CI/CD
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -16,18 +8,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install deps using lockfile
+        run: npm ci
+
+      - name: Debug versions
+        run: npm ls @heroui/system
 
       - name: Build project
         run: npm run build
 
-      - name: Deploy to Azure Static Web Apps
+      - name: Deploy to Azure
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
           app_location: "/" 
-          output_location: "dist" 
+          output_location: "dist"
