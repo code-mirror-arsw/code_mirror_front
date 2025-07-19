@@ -45,7 +45,7 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8280/auth/login", {
+      const res = await fetch("https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

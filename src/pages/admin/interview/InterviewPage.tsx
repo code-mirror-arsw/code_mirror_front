@@ -53,7 +53,7 @@ export default function InterviewPage() {
         throw new Error("Este enlace no le pertenece a este usuairo.");
       }
 
-      const url = `http://localhost:8280/services/be/user-service/users/role/email/${parsed.email}`;
+      const url = `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/user-service/users/role/email/${parsed.email}`;
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
 
       if (res.status === 401) {

@@ -43,7 +43,7 @@ export default function CreateOfferForm() {
 
     try {
       const res = await fetch(
-        "http://localhost:8280/services/be/offer-service/offers",
+        "https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/offer-service/offers",
         {
           method: "POST",
           headers: {

@@ -49,7 +49,7 @@ export default function OffersTablesClient() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8280/services/be/offer-service/offers/clientEmail/${userEmail}?page=${page - 1}&size=10`,
+          `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/offer-service/offers/clientEmail/${userEmail}?page=${page - 1}&size=10`,
           {
             signal: controller.signal,
             headers: {

@@ -29,7 +29,7 @@ const VerifyOtpPage = () => {
     const token = Cookies.get("accessToken");
 
     try {
-      const res = await fetch(`http://localhost:8280/auth/verify?code=${code}`, {
+      const res = await fetch(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/auth/verify?code=${code}`, {
         method: "GET",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });

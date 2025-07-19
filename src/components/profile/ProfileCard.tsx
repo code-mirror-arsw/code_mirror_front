@@ -37,7 +37,7 @@ export default function ProfileCard() {
 
     const controller = new AbortController();
 
-    fetch(`http://localhost:8280/services/be/user-service/users/${cookieId}`, {
+    fetch(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/user-service/users/${cookieId}`, {
       signal: controller.signal,
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -64,7 +64,7 @@ export default function ProfileCard() {
   const handleDownloadCV = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:8280/services/be/user-service/cv/${user.id}`, {
+      const res = await fetch(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/user-service/cv/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 401) {

@@ -55,7 +55,7 @@ export default function InterviewLayout({
 
   const startRoom = async () => {
     try {
-      const res = await fetch("http://localhost:8280/services/be/stream-service/room/start", {
+      const res = await fetch("https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ export default function InterviewLayout({
       }
 
       const res = await fetch(
-        `http://localhost:8280/services/be/interview-service/interview/language?id=${interviewId}`,
+        `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/interview-service/interview/language?id=${interviewId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export default function InterviewLayout({
   const fetchAdminEmail = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8280/services/be/interview-service/interview/admin?id=${interviewId}`,
+        `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/interview-service/interview/admin?id=${interviewId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -158,7 +158,7 @@ export default function InterviewLayout({
     setSuccessOpen(true);
 
     try {
-      const res = await fetch(`http://localhost:8280/services/be/code-service/code?roomId=${roomId}`, {
+      const res = await fetch(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/code?roomId=${roomId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +201,7 @@ export default function InterviewLayout({
     const existingResult = localStorage.getItem(`result_${roomId}`);
     if (existingResult) {
       const parsed = JSON.parse(existingResult);
-      const { success, score, feedback } = parsed;
+      const {  score, feedback } = parsed;
       const msg = `✅ Evaluado con éxito\nPuntaje: ${score}/100\n\n💬 ${feedback}`;
       setSuccessMessage(msg);
       setSuccessOpen(true);
@@ -219,7 +219,7 @@ export default function InterviewLayout({
 
     try {
       const res = await fetch(
-        `http://localhost:8280/services/be/code-service/code/grade?roomId=${roomId}`,
+        `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/code/grade?roomId=${roomId}`,
         {
           method: "POST",
           headers: {
@@ -259,7 +259,7 @@ export default function InterviewLayout({
 
     const fetchExistingRoom = async () => {
       try {
-        const res = await fetch(`http://localhost:8280/services/be/stream-service/room/${interviewId}`, {
+        const res = await fetch(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/room/${interviewId}`, {
           signal: controller.signal,
           headers: { Authorization: `Bearer ${token}` },
         });

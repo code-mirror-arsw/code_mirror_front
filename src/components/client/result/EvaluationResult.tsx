@@ -53,7 +53,7 @@ export default function EvaluationResultsTable() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:8280/services/be/code-service/evaluation-results/by-participant?email=${userEmail}&page=${page - 1}`,
+          `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/evaluation-results/by-participant?email=${userEmail}&page=${page - 1}`,
           {
             signal: controller.signal,
             headers: {

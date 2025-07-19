@@ -29,7 +29,7 @@ export interface InterviewDto {
 }
 
 const BASE_URL =
-  "http://localhost:8280/services/be/interview-service/interview";
+  "https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/interview-service/interview";
 
 interface Props {
   adminEmail: string;

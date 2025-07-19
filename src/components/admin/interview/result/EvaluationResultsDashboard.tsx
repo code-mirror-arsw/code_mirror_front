@@ -63,8 +63,8 @@ export default function EvaluationResultsDashboard() {
     const controller = new AbortController();
     const safePage = Math.max(0, page - 1);
     const url = viewPassed
-      ? `http://localhost:8280/services/be/code-service/evaluation-results/by-admin/passed?email=${userEmail}&page=${safePage}`
-      : `http://localhost:8280/services/be/code-service/evaluation-results/by-admin/failed?email=${userEmail}&page=${safePage}`;
+      ? `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/evaluation-results/by-admin/passed?email=${userEmail}&page=${safePage}`
+      : `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/evaluation-results/by-admin/failed?email=${userEmail}&page=${safePage}`;
 
     (async () => {
       try {
@@ -105,11 +105,11 @@ export default function EvaluationResultsDashboard() {
     const fetchCounts = async () => {
       try {
         const passedRes = await fetch(
-          `http://localhost:8280/services/be/code-service/evaluation-results/by-admin/passed/count?email=${userEmail}`,
+          `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/evaluation-results/by-admin/passed/count?email=${userEmail}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const failedRes = await fetch(
-          `http://localhost:8280/services/be/code-service/evaluation-results/by-admin/failed/count?email=${userEmail}`,
+          `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/code-service/evaluation-results/by-admin/failed/count?email=${userEmail}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
