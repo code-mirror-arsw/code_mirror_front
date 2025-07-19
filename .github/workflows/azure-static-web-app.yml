@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies (ci)
+        run: npm ci
 
       - name: Build project
         run: npm run build
@@ -30,4 +30,4 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
           app_location: "/" 
-          output_location: "dist" 
+          output_location: "dist"
