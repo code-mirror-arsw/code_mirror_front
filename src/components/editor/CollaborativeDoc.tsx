@@ -3,6 +3,7 @@ import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { QuillBinding } from "y-quill";
 import ReactQuill, { Quill } from "react-quill";
+
 import QuillCursors from "quill-cursors";
 import ReconnectingModal from "../loading/ReconnectingModal";
 
