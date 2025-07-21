@@ -52,12 +52,14 @@ export default function WebRTCAudio({
 
     const start = async () => {
       const socket = new SockJS(
-        "https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/ws",
-        undefined,
-        {
-          withCredentials: false, // ❌ Asegura que NO se envíen cookies o credenciales
-        }
-      );
+      "https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/ws",
+      undefined,
+      {
+        // @ts-expect-error 'withCredentials' no está en los tipos pero es útil evitar cookies
+        withCredentials: false,
+      }
+    );
+
 
       const stomp = Stomp.over(socket);
       stomp.debug = () => {};
