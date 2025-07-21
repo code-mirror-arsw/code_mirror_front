@@ -24,7 +24,8 @@ export default function AppNavbar() {
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-md py-4 px-4 sm:px-10">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Logo + Toggle Menu */}
         <div className="flex items-center justify-between w-full sm:w-auto">
           <div className="flex items-center gap-3">
             <img
@@ -37,6 +38,7 @@ export default function AppNavbar() {
             </span>
           </div>
 
+          {/* Hamburger Button */}
           <button
             className="sm:hidden text-gray-800 dark:text-white"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -62,60 +64,89 @@ export default function AppNavbar() {
           </button>
         </div>
 
+        {/* Main Menu */}
         <div
           className={`${
             menuOpen ? "block" : "hidden"
           } w-full sm:flex sm:flex-row sm:items-center sm:gap-6 text-lg font-medium text-gray-700 dark:text-gray-200`}
         >
+          {/* Navigation Links */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-4 sm:mt-0">
             <Link to="/" className="hover:text-blue-600 transition">
               Home
             </Link>
+
             {role === "ADMIN" && (
               <>
-                <Link to="/crear-oferta" className="hover:text-blue-600 transition">Crear Oferta</Link>
-                <Link to="/ofertas-creadas" className="hover:text-blue-600 transition">Ofertas Creadas</Link>
-                <Link to="/entrevistas" className="hover:text-blue-600 transition">Entrevistas por programar</Link>
-                <Link to="/resultadoAdmin" className="hover:text-blue-600 transition">Estadísticas</Link>
-                <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
+                <Link to="/crear-oferta" className="hover:text-blue-600 transition">
+                  Crear Oferta
+                </Link>
+                <Link to="/ofertas-creadas" className="hover:text-blue-600 transition">
+                  Ofertas Creadas
+                </Link>
+                <Link to="/entrevistas" className="hover:text-blue-600 transition">
+                  Entrevistas por programar
+                </Link>
+                <Link to="/resultadoAdmin" className="hover:text-blue-600 transition">
+                  Estadísticas
+                </Link>
+                <Link to="/perfil" className="hover:text-blue-600 transition">
+                  Mi perfil
+                </Link>
               </>
             )}
+
             {role === "CLIENT" && (
               <>
-                <Link to="/mis-ofertas" className="hover:text-blue-600 transition">Mis Ofertas</Link>
-                <Link to="/ofertas-nuevas" className="hover:text-blue-600 transition">Ofertas Nuevas</Link>
-                <Link to="/resultados" className="hover:text-blue-600 transition">Mis Resultados</Link>
-                <Link to="/perfil" className="hover:text-blue-600 transition">Mi perfil</Link>
+                <Link to="/mis-ofertas" className="hover:text-blue-600 transition">
+                  Mis Ofertas
+                </Link>
+                <Link to="/ofertas-nuevas" className="hover:text-blue-600 transition">
+                  Ofertas Nuevas
+                </Link>
+                <Link to="/resultados" className="hover:text-blue-600 transition">
+                  Mis Resultados
+                </Link>
+                <Link to="/perfil" className="hover:text-blue-600 transition">
+                  Mi perfil
+                </Link>
               </>
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 sm:mt-0 sm:ml-auto">
-            <ThemeToggle />
-            {!isLoggedIn ? (
-              <>
-                <Link
-                  to="/login"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-                >
-                  Iniciar sesión
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-gray-300 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-400 transition"
-                >
-                  Registrarse
-                </Link>
-              </>
-            ) : (
-              <button
-                onClick={logout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-              >
-                Cerrar sesión
-              </button>
-            )}
-          </div>
+          {/* Theme Toggle + Auth Buttons */}
+{/* Theme Toggle + Auth Buttons */}
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mt-4 sm:mt-0 w-full sm:w-auto">
+  {!isLoggedIn ? (
+    <>
+      <Link
+        to="/login"
+        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+      >
+        Iniciar sesión
+      </Link>
+      <Link
+        to="/register"
+        className="bg-gray-300 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-400 transition"
+      >
+        Registrarse
+      </Link>
+    </>
+  ) : (
+    <button
+      onClick={logout}
+      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+    >
+      Cerrar sesión
+    </button>
+  )}
+
+  <div className="flex items-center">
+    <ThemeToggle />
+  </div>
+</div>
+
+
         </div>
       </div>
     </nav>
