@@ -54,34 +54,43 @@ export default function InterviewLayout({
   const token = Cookies.get("accessToken");
 
   const startRoom = async () => {
-    try {
-      const res = await fetch("https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ interviewerId: interviewId, participants }),
-      });
+  try {
+    console.log("🔐 Enviando token:", token);
 
-      if (res.status === 401) {
-        handleSessionExpired();
-        return;
-      }
+    const res = await fetch("https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ interviewerId: interviewId, participants }),
+    });
 
-      const data = await res.json();
-      if (res.ok) {
-        setRoomId(data.roomId);
-        setCookie(`room_${interviewId}`, data.roomId);
-      } else {
-        setErrorMessage(data.message || "No se pudo crear la sala.");
-        setErrorOpen(true);
-      }
-    } catch {
-      setErrorMessage("Error de red al crear la sala.");
+    console.log("📡 startRoom status:", res.status);
+
+    const text = await res.text();
+    console.log("📦 startRoom response:", text);
+
+    if (res.status === 401) {
+      handleSessionExpired();
+      return;
+    }
+
+    if (res.ok) {
+      const data = JSON.parse(text);
+      setRoomId(data.roomId);
+      setCookie(`room_${interviewId}`, data.roomId);
+    } else {
+      setErrorMessage("Error: " + text);
       setErrorOpen(true);
     }
-  };
+  } catch (e) {
+    console.error("❌ Error de red al crear la sala:", e);
+    setErrorMessage("Error de red al crear la sala.");
+    setErrorOpen(true);
+  }
+};
+
 
   const handleSessionExpired = () => {
     setErrorMessage("Debes tener iniciada sesión.");
