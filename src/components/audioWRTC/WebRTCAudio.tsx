@@ -43,7 +43,12 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
     };
 
     const start = async () => {
-      const socket = new SockJS(`https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/ws`);
+      const socket = new SockJS(
+        `https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/ws`,
+        undefined,
+        { withCredentials: true }
+      );
+
       const stomp = Stomp.over(socket);
       stomp.debug = () => {};
       stompRef.current = stomp;
