@@ -14,6 +14,7 @@ Quill.register("modules/cursors", QuillCursors);
 interface Props {
   roomId: string;
   userId: string;
+  submitted: boolean;
 }
 
 interface TypingUser {
@@ -22,21 +23,28 @@ interface TypingUser {
   color: string;
 }
 
-export default function CollaborativeDoc({ roomId, userId }: Props) {
+interface WebSocketMessage {
+  type: string;
+  sender?: string;
+  timestamp?: number;
+}
+
+export default function CollaborativeDoc({ roomId, userId, submitted }: Props) {
   const quillRef = useRef<ReactQuill>(null);
   const [typing, setTyping] = useState<TypingUser[]>([]);
   const [isConnected, setIsConnected] = useState(true);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(() => {
+    return localStorage.getItem(`submitted_${roomId}`) === 'true';
+  });
+  const [submitter, setSubmitter] = useState<string | null>(null);
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<WebsocketProvider | null>(null);
+
   const wsUrl = `wss://codemirrorstream-b6b9evcfaqe3c3cv.canadacentral-01.azurewebsites.net/services/be/stream-service/yjs`;
 
   useEffect(() => {
-    const storedResult = localStorage.getItem(`submission_${roomId}`);
-    if (storedResult) setIsSubmitted(true);
-  }, [roomId]);
+    if (!quillRef.current) return;
 
-  const connect = () => {
     const ydoc = new Y.Doc();
     const provider = new WebsocketProvider(wsUrl, roomId, ydoc);
 
@@ -48,46 +56,127 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
     });
 
     const yText = ydoc.getText("quill");
-    const quill = quillRef.current!.getEditor();
+    const quill = quillRef.current.getEditor();
     const cursors = quill.getModule("cursors") as QuillCursors;
 
     const palette = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"];
-    const color =
-      palette[userId.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % palette.length];
+    const colorIndex = userId
+      .split("")
+      .reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % palette.length;
+    const userColor = palette[colorIndex];
 
     new QuillBinding(yText, quill, provider.awareness);
-    provider.awareness.setLocalStateField("user", { name: userId, color });
 
-    const updateUI = () => {
-      const list: TypingUser[] = [];
-      provider.awareness.getStates().forEach((state, id) => {
-        if (!state.user || !state.selection) return;
-        if (!cursors.cursors().some((c: any) => c.id === String(id))) {
-          cursors.createCursor(String(id), state.user.name, state.user.color);
+    provider.awareness.setLocalStateField("user", {
+      name: userId,
+      color: userColor,
+    });
+
+    // 👂 Escuchar mensajes del WebSocket
+    const handleWebSocketMessage = (event: MessageEvent) => {
+      try {
+        const data: WebSocketMessage = JSON.parse(event.data);
+        if (data.type === "final") {
+          setIsSubmitted(true);
+          localStorage.setItem(`submitted_${roomId}`, 'true');
+          provider.awareness.setLocalStateField("submitted", true);
+          if (data.sender) {
+            setSubmitter(data.sender);
+          }
         }
-        cursors.moveCursor(String(id), state.selection);
-        list.push({ id: String(id), ...state.user });
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    provider.ws?.addEventListener("message", handleWebSocketMessage);
+
+    // Manejar cambios en el awareness
+    const handleAwarenessChange = () => {
+      const list: TypingUser[] = [];
+      let someoneSubmitted = false;
+
+      provider.awareness.getStates().forEach((state, id) => {
+        if (!state.user) return;
+
+        const clientId = String(id);
+        const { name, color } = state.user;
+
+        if (!cursors.cursors().some((c: any) => c.id === clientId)) {
+          cursors.createCursor(clientId, name, color);
+        }
+
+        if (state.selection) {
+          cursors.moveCursor(clientId, state.selection);
+        }
+
+        list.push({ id: clientId, name, color });
+
+        if (state.submitted === true) {
+          someoneSubmitted = true;
+          if (state.user.name) {
+            setSubmitter(state.user.name);
+          }
+        }
       });
+
       setTyping(list);
+      if (someoneSubmitted) {
+        setIsSubmitted(true);
+        localStorage.setItem(`submitted_${roomId}`, 'true');
+      }
     };
 
-    provider.awareness.on("change", updateUI);
+    provider.awareness.on("change", handleAwarenessChange);
 
-    quill.on("selection-change", sel =>
-      provider.awareness.setLocalStateField("selection", sel)
-    );
-  };
+    const onSelectionChange = (sel: any) => {
+      provider.awareness.setLocalStateField("selection", sel);
+    };
 
-  useEffect(() => {
-    if (!quillRef.current) return;
-    connect();
+    quill.on("selection-change", onSelectionChange);
+
     return () => {
-      providerRef.current?.destroy();
-      ydocRef.current?.destroy();
+      quill.off("selection-change", onSelectionChange);
+      provider.ws?.removeEventListener("message", handleWebSocketMessage);
+      provider.awareness.off("change", handleAwarenessChange);
+      provider.destroy();
+      ydoc.destroy();
     };
-  }, []);
+  }, [roomId, userId]);
 
-  const modules = { cursors: true, toolbar: false };
+  // ✅ Emitir mensaje "final" cuando submitted sea true
+  useEffect(() => {
+    const provider = providerRef.current;
+    if (!provider || !submitted) return;
+
+    const msg = JSON.stringify({ 
+      type: "final",
+      sender: userId,
+      timestamp: Date.now()
+    });
+
+    const sendFinalMessage = () => {
+      if (provider.ws?.readyState === WebSocket.OPEN) {
+        provider.ws.send(msg);
+      } else {
+        const onOpen = () => {
+          provider.ws?.send(msg);
+          provider.ws?.removeEventListener('open', onOpen);
+        };
+        provider.ws?.addEventListener('open', onOpen);
+      }
+    };
+
+    sendFinalMessage();
+    provider.awareness.setLocalStateField("submitted", true);
+    setIsSubmitted(true);
+    localStorage.setItem(`submitted_${roomId}`, 'true');
+  }, [submitted, roomId, userId]);
+
+  const modules = {
+    cursors: true,
+    toolbar: false,
+  };
 
   return (
     <>
@@ -107,13 +196,15 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
           theme="snow"
           modules={modules}
           readOnly={isSubmitted}
-          placeholder="Escribe código colaborativo…"
+          placeholder={isSubmitted ? "La evaluación ha sido enviada" : "Escribe código colaborativo…"}
           style={{ width: "100%", height: "95%" }}
         />
 
         {isSubmitted && (
-          <div className="text-green-600 font-medium mt-2 text-center">
-            ✅ Código enviado
+          <div className="text-green-600 font-medium mt-2 text-center p-4 bg-green-100 rounded-lg">
+            ✅ Código enviado para evaluación {submitter && `por ${submitter}`}
+            <br />
+            Ya no se pueden hacer más modificaciones.
           </div>
         )}
       </div>

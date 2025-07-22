@@ -14,6 +14,14 @@ export default function LandingPage() {
   const [name, setName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Recargar automáticamente al cargar, solo una vez, sin sessionStorage
+  useEffect(() => {
+    if (!window.location.href.includes('reloaded')) {
+      const separator = window.location.href.includes('?') ? '&' : '?';
+      window.location.href = `${window.location.href}${separator}reloaded`;
+    }
+  }, []);
+
   useEffect(() => {
     setRole(Cookies.get('userRole') || null);
     setName(Cookies.get('userName') || null);
