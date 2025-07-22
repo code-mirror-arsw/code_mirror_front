@@ -44,12 +44,7 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
     providerRef.current = provider;
 
     provider.on("status", e => {
-      if (e.status === "connected") {
-        setIsConnected(true);
-        flushLocalChanges();
-      } else if (e.status === "disconnected") {
-        setIsConnected(false);
-      }
+      setIsConnected(e.status === "connected");
     });
 
     const yText = ydoc.getText("quill");
@@ -78,30 +73,9 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
 
     provider.awareness.on("change", updateUI);
 
-    quill.on("text-change", delta => {
-      if (!provider.wsconnected) {
-        saveToLocal(delta);
-      }
-    });
-
     quill.on("selection-change", sel =>
       provider.awareness.setLocalStateField("selection", sel)
     );
-  };
-
-  const saveToLocal = (delta: any) => {
-    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
-    changes.push(delta);
-    localStorage.setItem("offlineChanges", JSON.stringify(changes));
-  };
-
-  const flushLocalChanges = () => {
-    const quill = quillRef.current?.getEditor();
-    const changes = JSON.parse(localStorage.getItem("offlineChanges") || "[]");
-    changes.forEach((delta: any) => {
-      quill?.updateContents(delta);
-    });
-    localStorage.removeItem("offlineChanges");
   };
 
   useEffect(() => {
