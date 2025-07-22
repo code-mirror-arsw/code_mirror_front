@@ -8,123 +8,100 @@ interface WebRTCAudioProps {
   onStreamReady: (stream: MediaStream) => void;
 }
 
+interface PeerMap {
+  [key: string]: RTCPeerConnection;
+}
+
 export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAudioProps) {
-  const peerRef = useRef<RTCPeerConnection | null>(null);
+  const peersRef = useRef<PeerMap>({});
   const stompRef = useRef<any>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const subscriptionRef = useRef<any>(null);
   const reconnectIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const createPeer = () => {
+  const createPeer = (targetUserId: string) => {
     const pc = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
     });
 
-    localStreamRef.current?.getTracks().forEach(t => pc.addTrack(t, localStreamRef.current!));
+    localStreamRef.current?.getTracks().forEach(track =>
+      pc.addTrack(track, localStreamRef.current!)
+    );
 
-    pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        sendSignal({ candidate: e.candidate });
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal(targetUserId, { candidate: event.candidate });
       }
     };
 
-    pc.ontrack = (e) => {
+    pc.ontrack = (event) => {
       const audio = new Audio();
-      audio.srcObject = e.streams[0];
+      audio.srcObject = event.streams[0];
       audio.autoplay = true;
     };
 
-    peerRef.current = pc;
+    peersRef.current[targetUserId] = pc;
     return pc;
   };
 
-  const sendSignal = (payload: any) => {
-    if (stompRef.current && stompRef.current.connected) {
+  const sendSignal = (targetUserId: string, payload: any) => {
+    if (stompRef.current?.connected) {
       stompRef.current.send(
         `/app/room/${roomId}`,
         {},
-        JSON.stringify({ userId, roomId, payload })
+        JSON.stringify({ userId, roomId, targetUserId, payload })
       );
     }
   };
 
   const setupStomp = async () => {
-    const socket = new SockJS(
-      `https://codemirrorstream-b6b9evcfaqe3c3cv.canadacentral-01.azurewebsites.net/services/be/stream-service/ws`
-    );
-
+    const socket = new SockJS(`https://codemirrorstream-b6b9evcfaqe3c3cv.canadacentral-01.azurewebsites.net/services/be/stream-service/ws`);
     const stomp = Stomp.over(socket);
     stomp.debug = () => {};
     stompRef.current = stomp;
 
-    stomp.connect(
-      {},
-      async () => {
-        console.log("✅ STOMP conectado");
-        if (reconnectIntervalRef.current) {
-          clearInterval(reconnectIntervalRef.current);
-          reconnectIntervalRef.current = null;
-        }
+    stomp.connect({}, async () => {
+      console.log("✅ STOMP conectado");
 
-        subscriptionRef.current = stomp.subscribe(
-          `/topic/room/${roomId}`,
-          async (msg: any) => {
-            const { userId: uid, payload } = JSON.parse(msg.body);
-            if (uid === userId) return;
-
-            const pc = peerRef.current ?? createPeer();
-
-            if (payload.type === "offer") {
-              await pc.setRemoteDescription(payload);
-              const answer = await pc.createAnswer();
-              answer.sdp = answer.sdp!.replace(
-                /useinbandfec=1/,
-                "useinbandfec=1; stereo=1; maxaveragebitrate=510000"
-              );
-              await pc.setLocalDescription(answer);
-              sendSignal(answer);
-            } else if (payload.type === "answer") {
-              await pc.setRemoteDescription(payload);
-            } else if (payload.candidate) {
-              await pc.addIceCandidate(payload.candidate);
-            }
-          }
-        );
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            channelCount: 2,
-            sampleRate: 48000,
-            sampleSize: 16,
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false,
-          },
-          video: false,
-        });
-
-        localStreamRef.current = stream;
-        onStreamReady(stream);
-
-        const pc = createPeer();
-        const offer = await pc.createOffer();
-        offer.sdp = offer.sdp!.replace(
-          /useinbandfec=1/,
-          "useinbandfec=1; stereo=1; maxaveragebitrate=510000"
-        );
-        await pc.setLocalDescription(offer);
-        sendSignal(offer);
-      },
-      (error: any) => {
-        console.error("❌ Error de conexión STOMP:", error);
-        if (!reconnectIntervalRef.current) {
-          reconnectIntervalRef.current = setInterval(() => {
-            console.log("🔄 Reintentando conexión STOMP...");
-            setupStomp();
-          }, 10000);
-        }
+      if (reconnectIntervalRef.current) {
+        clearInterval(reconnectIntervalRef.current);
+        reconnectIntervalRef.current = null;
       }
-    );
+
+      subscriptionRef.current = stomp.subscribe(`/topic/room/${roomId}`, async (msg: any) => {
+        const { userId: senderId, targetUserId, payload } = JSON.parse(msg.body);
+        if (senderId === userId || targetUserId !== userId) return;
+
+        const pc = peersRef.current[senderId] || createPeer(senderId);
+
+        if (payload.type === "offer") {
+          await pc.setRemoteDescription(new RTCSessionDescription(payload));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          sendSignal(senderId, answer);
+        } else if (payload.type === "answer") {
+          await pc.setRemoteDescription(new RTCSessionDescription(payload));
+        } else if (payload.candidate) {
+          await pc.addIceCandidate(new RTCIceCandidate(payload.candidate));
+        }
+      });
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
+
+      localStreamRef.current = stream;
+      onStreamReady(stream);
+    }, (err: any) => {
+      console.error("❌ Error STOMP:", err);
+      if (!reconnectIntervalRef.current) {
+        reconnectIntervalRef.current = setInterval(() => {
+          console.log("🔄 Reintentando conexión STOMP...");
+          setupStomp();
+        }, 10000);
+      }
+    });
   };
 
   useEffect(() => {
@@ -133,9 +110,8 @@ export default function WebRTCAudio({ userId, roomId, onStreamReady }: WebRTCAud
     return () => {
       subscriptionRef.current?.unsubscribe();
       stompRef.current?.disconnect();
-      peerRef.current?.close();
+      Object.values(peersRef.current).forEach(pc => pc.close());
       localStreamRef.current?.getTracks().forEach(t => t.stop());
-
       if (reconnectIntervalRef.current) {
         clearInterval(reconnectIntervalRef.current);
       }
