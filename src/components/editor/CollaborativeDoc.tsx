@@ -29,7 +29,7 @@ export default function CollaborativeDoc({ roomId, userId }: Props) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<WebsocketProvider | null>(null);
-  const wsUrl = `wss://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/yjs`;
+  const wsUrl = `wss://codemirrorstream-b6b9evcfaqe3c3cv.canadacentral-01.azurewebsites.net/services/be/stream-service/yjs`;
 
   useEffect(() => {
     const storedResult = localStorage.getItem(`submission_${roomId}`);

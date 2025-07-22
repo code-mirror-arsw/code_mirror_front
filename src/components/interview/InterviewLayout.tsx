@@ -57,7 +57,7 @@ export default function InterviewLayout({
   try {
     console.log("🔐 Enviando token:", token);
 
-    const res = await fetch("https://apigateway-b8exa0bnakh6bvhx.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
+    const res = await fetch("https://codemirrorstream-b6b9evcfaqe3c3cv.canadacentral-01.azurewebsites.net/services/be/stream-service/room/start", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
