@@ -29,6 +29,7 @@
     "@react-types/shared": "3.30.0",
     "@stomp/stompjs": "^7.1.1",
     "@tiptap/react": "^3.0.7",
+    "agora-rtc-sdk-ng": "^4.23.4",
     "clsx": "2.1.1",
     "framer-motion": "11.15.0",
     "highlight.js": "^11.9.0",
